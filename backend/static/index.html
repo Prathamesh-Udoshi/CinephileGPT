@@ -1,0 +1,1532 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>CinephileGPT - Your Cinema Companion</title>
+    <!-- Google Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --bg-base: #0a0a0d;
+            --bg-panel: #121217;
+            --bg-bubble-user: #1f1f2e;
+            --bg-bubble-bot: #15151c;
+            --border-color: #262633;
+            --text-main: #f0f0f5;
+            --text-muted: #8e8e9f;
+            --color-primary: #e50914; /* Cinephile Red */
+            --color-primary-hover: #b80710;
+            --color-gold: #ffaa00; /* Movie Gold */
+            --color-success: #00e676;
+            --font-main: 'Inter', sans-serif;
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
+        body {
+            font-family: var(--font-main);
+            background-color: var(--bg-base);
+            color: var(--text-main);
+            height: 100vh;
+            overflow: hidden;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+
+        /* --- AUTH OVERLAY --- */
+        #auth-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(6, 6, 9, 0.95);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            z-index: 1000;
+        }
+
+        .auth-container {
+            background-color: var(--bg-panel);
+            border: 1px solid var(--border-color);
+            border-radius: 16px;
+            padding: 40px;
+            width: 100%;
+            max-width: 420px;
+            box-shadow: 0 10px 40px rgba(0,0,0,0.6);
+            border-top: 4px solid var(--color-primary);
+        }
+
+        .auth-logo {
+            text-align: center;
+            font-size: 2rem;
+            font-weight: 700;
+            color: var(--text-main);
+            margin-bottom: 24px;
+        }
+
+        .auth-logo span {
+            color: var(--color-primary);
+        }
+
+        .auth-tabs {
+            display: flex;
+            margin-bottom: 24px;
+            border-bottom: 1px solid var(--border-color);
+        }
+
+        .auth-tab {
+            flex: 1;
+            padding: 10px;
+            text-align: center;
+            cursor: pointer;
+            color: var(--text-muted);
+            font-weight: 500;
+            transition: all 0.2s;
+        }
+
+        .auth-tab.active {
+            color: var(--color-primary);
+            border-bottom: 2px solid var(--color-primary);
+        }
+
+        .form-group {
+            margin-bottom: 18px;
+        }
+
+        .form-group label {
+            display: block;
+            margin-bottom: 6px;
+            font-size: 0.85rem;
+            color: var(--text-muted);
+            font-weight: 500;
+        }
+
+        .form-group input {
+            width: 100%;
+            padding: 12px 16px;
+            background-color: var(--bg-base);
+            border: 1px solid var(--border-color);
+            border-radius: 8px;
+            color: var(--text-main);
+            font-family: inherit;
+            outline: none;
+            transition: border-color 0.2s;
+        }
+
+        .form-group input:focus {
+            border-color: var(--color-primary);
+        }
+
+        .auth-btn {
+            width: 100%;
+            padding: 14px;
+            background-color: var(--color-primary);
+            border: none;
+            border-radius: 8px;
+            color: white;
+            font-weight: 600;
+            font-size: 1rem;
+            cursor: pointer;
+            transition: background-color 0.2s;
+            margin-top: 10px;
+        }
+
+        .auth-btn:hover {
+            background-color: var(--color-primary-hover);
+        }
+
+        .auth-error {
+            color: var(--color-primary);
+            font-size: 0.85rem;
+            margin-top: 12px;
+            text-align: center;
+            display: none;
+        }
+
+        /* --- DASHBOARD LAYOUT --- */
+        #app-layout {
+            display: none; /* Shown after auth */
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100vw;
+            height: 100vh;
+            grid-template-columns: 280px 1fr 340px;
+            background-color: var(--bg-base);
+        }
+
+        /* --- LEFT SIDEBAR (SESSIONS & WATCHLIST) --- */
+        .left-sidebar {
+            background-color: var(--bg-panel);
+            border-right: 1px solid var(--border-color);
+            display: flex;
+            flex-direction: column;
+            height: 100%;
+        }
+
+        .app-header {
+            padding: 20px;
+            border-bottom: 1px solid var(--border-color);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .app-title {
+            font-size: 1.25rem;
+            font-weight: 700;
+        }
+
+        .app-title span {
+            color: var(--color-primary);
+        }
+
+        .logout-btn {
+            background: none;
+            border: none;
+            color: var(--text-muted);
+            cursor: pointer;
+            font-size: 0.85rem;
+        }
+
+        .logout-btn:hover {
+            color: var(--color-primary);
+        }
+
+        .sessions-section {
+            padding: 20px 15px;
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            overflow-y: auto;
+        }
+
+        .new-chat-btn {
+            width: 100%;
+            padding: 12px;
+            background-color: transparent;
+            border: 1px dashed var(--border-color);
+            border-radius: 8px;
+            color: var(--text-main);
+            font-weight: 500;
+            cursor: pointer;
+            transition: all 0.2s;
+            margin-bottom: 15px;
+        }
+
+        .new-chat-btn:hover {
+            border-color: var(--color-primary);
+            color: var(--color-primary);
+        }
+
+        .sessions-list {
+            list-style: none;
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+        }
+
+        .session-item {
+            padding: 12px;
+            border-radius: 8px;
+            cursor: pointer;
+            font-size: 0.9rem;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+            color: var(--text-muted);
+            border: 1px solid transparent;
+            transition: all 0.2s;
+        }
+
+        .session-item:hover {
+            background-color: var(--bg-base);
+            color: var(--text-main);
+        }
+
+        .session-item.active {
+            background-color: var(--bg-bubble-user);
+            color: var(--text-main);
+            border-color: var(--border-color);
+        }
+
+        .watchlist-section {
+            padding: 20px 15px;
+            border-top: 1px solid var(--border-color);
+            height: 300px;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .section-title {
+            font-size: 0.85rem;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            color: var(--text-muted);
+            margin-bottom: 12px;
+            font-weight: 600;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .watchlist-list {
+            flex: 1;
+            overflow-y: auto;
+            list-style: none;
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+        }
+
+        .watchlist-item {
+            padding: 8px 10px;
+            background-color: var(--bg-base);
+            border-radius: 6px;
+            font-size: 0.85rem;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            border: 1px solid transparent;
+        }
+
+        .watchlist-item-name {
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+            max-width: 140px;
+            cursor: pointer;
+        }
+
+        .watchlist-item-name:hover {
+            color: var(--color-gold);
+        }
+
+        .watchlist-item-actions {
+            display: flex;
+            gap: 6px;
+        }
+
+        .watchlist-action-btn {
+            background: none;
+            border: none;
+            cursor: pointer;
+            font-size: 0.75rem;
+            padding: 2px 4px;
+            border-radius: 4px;
+        }
+
+        .watchlist-btn-like {
+            color: var(--text-muted);
+        }
+        .watchlist-btn-like.active {
+            color: var(--color-gold);
+        }
+
+        .watchlist-btn-del {
+            color: var(--text-muted);
+        }
+        .watchlist-btn-del:hover {
+            color: var(--color-primary);
+        }
+
+        /* --- CENTER PANEL (CHAT ROOM) --- */
+        .chat-panel {
+            display: flex;
+            flex-direction: column;
+            height: 100%;
+            background-color: var(--bg-base);
+        }
+
+        .chat-header {
+            padding: 20px;
+            border-bottom: 1px solid var(--border-color);
+            background-color: var(--bg-panel);
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+
+        .bot-avatar {
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            background-color: var(--color-primary);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            font-size: 1.5rem;
+        }
+
+        .chat-info h3 {
+            font-size: 1rem;
+            font-weight: 600;
+        }
+
+        .chat-info p {
+            font-size: 0.75rem;
+            color: var(--text-muted);
+        }
+
+        .messages-container {
+            flex: 1;
+            overflow-y: auto;
+            padding: 30px 20px;
+            display: flex;
+            flex-direction: column;
+            gap: 24px;
+        }
+
+        .message-row {
+            display: flex;
+            width: 100%;
+        }
+
+        .message-row.user {
+            justify-content: flex-end;
+        }
+
+        .message-row.bot {
+            justify-content: flex-start;
+        }
+
+        .message-bubble {
+            max-width: 75%;
+            padding: 16px 20px;
+            border-radius: 16px;
+            font-size: 0.95rem;
+            line-height: 1.5;
+            word-wrap: break-word;
+        }
+
+        .message-row.user .message-bubble {
+            background-color: var(--bg-bubble-user);
+            color: var(--text-main);
+            border-bottom-right-radius: 4px;
+            border: 1px solid var(--border-color);
+        }
+
+        .message-row.bot .message-bubble {
+            background-color: var(--bg-bubble-bot);
+            color: var(--text-main);
+            border-bottom-left-radius: 4px;
+            border: 1px solid var(--border-color);
+        }
+
+        /* Streaming Typing Indicator blinking */
+        .typing-cursor {
+            display: inline-block;
+            width: 8px;
+            height: 15px;
+            background-color: var(--color-primary);
+            margin-left: 4px;
+            animation: blink 0.8s infinite;
+            vertical-align: middle;
+        }
+
+        @keyframes blink {
+            0%, 100% { opacity: 0; }
+            50% { opacity: 1; }
+        }
+
+        /* Movie recommendations styling */
+        .movies-carousel {
+            margin-top: 15px;
+            display: flex;
+            gap: 12px;
+            overflow-x: auto;
+            padding-bottom: 8px;
+            width: 100%;
+        }
+
+        .movie-card {
+            background-color: var(--bg-panel);
+            border: 1px solid var(--border-color);
+            border-radius: 10px;
+            padding: 12px;
+            min-width: 200px;
+            max-width: 220px;
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+            transition: transform 0.2s, border-color 0.2s;
+        }
+
+        .movie-card:hover {
+            transform: translateY(-4px);
+            border-color: var(--color-gold);
+        }
+
+        .movie-card-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-start;
+            gap: 6px;
+        }
+
+        .movie-card-title {
+            font-size: 0.85rem;
+            font-weight: 600;
+            color: var(--text-main);
+            line-height: 1.3;
+        }
+
+        .movie-card-rating {
+            font-size: 0.75rem;
+            color: var(--color-gold);
+            font-weight: 700;
+            display: flex;
+            align-items: center;
+            gap: 2px;
+        }
+
+        .movie-card-meta {
+            font-size: 0.75rem;
+            color: var(--text-muted);
+        }
+
+        .movie-card-genres {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 4px;
+            margin-top: 2px;
+        }
+
+        .movie-genre-badge {
+            font-size: 0.65rem;
+            padding: 2px 6px;
+            background-color: var(--bg-base);
+            border-radius: 4px;
+            border: 1px solid var(--border-color);
+            color: var(--text-muted);
+        }
+
+        .movie-card-add-btn {
+            margin-top: auto;
+            width: 100%;
+            padding: 8px;
+            background-color: var(--bg-base);
+            border: 1px solid var(--border-color);
+            border-radius: 6px;
+            color: var(--text-main);
+            font-size: 0.75rem;
+            font-weight: 500;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+
+        .movie-card-add-btn:hover {
+            background-color: var(--color-primary);
+            border-color: var(--color-primary);
+        }
+
+        .input-panel {
+            padding: 20px;
+            background-color: var(--bg-panel);
+            border-top: 1px solid var(--border-color);
+        }
+
+        .input-form {
+            display: flex;
+            gap: 12px;
+            background-color: var(--bg-base);
+            border: 1px solid var(--border-color);
+            border-radius: 12px;
+            padding: 8px 12px;
+            transition: border-color 0.2s;
+        }
+
+        .input-form:focus-within {
+            border-color: var(--color-primary);
+        }
+
+        .chat-input {
+            flex: 1;
+            background: none;
+            border: none;
+            outline: none;
+            color: var(--text-main);
+            font-family: inherit;
+            font-size: 0.95rem;
+            padding: 8px 0;
+            resize: none;
+            height: 24px;
+            max-height: 120px;
+        }
+
+        .send-btn {
+            background-color: var(--color-primary);
+            border: none;
+            border-radius: 8px;
+            color: white;
+            padding: 0 16px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: background-color 0.2s;
+        }
+
+        .send-btn:hover {
+            background-color: var(--color-primary-hover);
+        }
+
+        /* --- RIGHT SIDEBAR (CINEPHILE MEMORY) --- */
+        .right-sidebar {
+            background-color: var(--bg-panel);
+            border-left: 1px solid var(--border-color);
+            display: flex;
+            flex-direction: column;
+            height: 100%;
+            overflow-y: auto;
+            padding: 20px;
+        }
+
+        .memory-box {
+            background-color: var(--bg-base);
+            border: 1px solid var(--border-color);
+            border-radius: 12px;
+            padding: 16px;
+            margin-bottom: 20px;
+        }
+
+        .memory-box h4 {
+            font-size: 0.85rem;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            color: var(--color-gold);
+            margin-bottom: 12px;
+            font-weight: 600;
+        }
+
+        .tags-container {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 6px;
+        }
+
+        .preference-tag {
+            font-size: 0.8rem;
+            padding: 4px 10px;
+            background-color: var(--bg-panel);
+            border-radius: 20px;
+            border: 1px solid var(--border-color);
+            display: flex;
+            align-items: center;
+            gap: 6px;
+        }
+
+        .preference-tag-delete {
+            cursor: pointer;
+            color: var(--text-muted);
+            font-weight: 700;
+        }
+
+        .preference-tag-delete:hover {
+            color: var(--color-primary);
+        }
+
+        .notes-text {
+            font-size: 0.85rem;
+            line-height: 1.5;
+            color: var(--text-muted);
+            white-space: pre-wrap;
+        }
+
+        .notes-empty {
+            color: var(--text-muted);
+            font-style: italic;
+            font-size: 0.8rem;
+        }
+
+        .refresh-memory-btn {
+            width: 100%;
+            padding: 10px;
+            background-color: var(--bg-base);
+            border: 1px solid var(--border-color);
+            border-radius: 8px;
+            color: var(--text-main);
+            font-size: 0.8rem;
+            font-weight: 500;
+            cursor: pointer;
+            transition: all 0.2s;
+            margin-top: 10px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .refresh-memory-btn:hover {
+            border-color: var(--color-primary);
+            color: var(--color-primary);
+        }
+
+        .edit-memory-form {
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+            margin-top: 15px;
+        }
+
+        .edit-memory-form input {
+            width: 100%;
+            padding: 8px 12px;
+            background-color: var(--bg-base);
+            border: 1px solid var(--border-color);
+            border-radius: 6px;
+            color: var(--text-main);
+            font-family: inherit;
+            font-size: 0.8rem;
+            outline: none;
+        }
+
+        .edit-memory-form input:focus {
+            border-color: var(--color-gold);
+        }
+
+        .edit-memory-btn {
+            padding: 8px;
+            background-color: var(--color-gold);
+            border: none;
+            border-radius: 6px;
+            color: #111;
+            font-weight: 600;
+            font-size: 0.8rem;
+            cursor: pointer;
+            transition: opacity 0.2s;
+        }
+
+        .edit-memory-btn:hover {
+            opacity: 0.9;
+        }
+
+        /* Scrollbar styles */
+        ::-webkit-scrollbar {
+            width: 6px;
+            height: 6px;
+        }
+        ::-webkit-scrollbar-track {
+            background: transparent;
+        }
+        ::-webkit-scrollbar-thumb {
+            background: var(--border-color);
+            border-radius: 4px;
+        }
+        ::-webkit-scrollbar-thumb:hover {
+            background: var(--text-muted);
+        }
+    </style>
+</head>
+<body>
+
+    <!-- --- AUTH SCREEN --- -->
+    <div id="auth-overlay">
+        <div class="auth-container">
+            <h1 class="auth-logo">Cinephile<span>GPT</span></h1>
+            <div class="auth-tabs">
+                <div id="tab-login" class="auth-tab active" onclick="setAuthTab('login')">Sign In</div>
+                <div id="tab-register" class="auth-tab" onclick="setAuthTab('register')">Register</div>
+            </div>
+            
+            <form id="auth-form" onsubmit="handleAuthSubmit(event)">
+                <div class="form-group">
+                    <label for="auth-username">Username</label>
+                    <input type="text" id="auth-username" required placeholder="Enter username">
+                </div>
+                <div id="email-field" class="form-group" style="display: none;">
+                    <label for="auth-email">Email Address</label>
+                    <input type="email" id="auth-email" placeholder="Enter email">
+                </div>
+                <div class="form-group">
+                    <label for="auth-password">Password</label>
+                    <input type="password" id="auth-password" required placeholder="Enter password">
+                </div>
+                
+                <button type="submit" id="auth-btn" class="auth-btn">Sign In</button>
+            </form>
+            <div id="auth-error" class="auth-error">Incorrect credentials. Try again.</div>
+        </div>
+    </div>
+
+    <!-- --- DASHBOARD LAYOUT --- -->
+    <div id="app-layout">
+        
+        <!-- LEFT PANEL: SESSIONS & WATCHLIST -->
+        <aside class="left-sidebar">
+            <header class="app-header">
+                <div class="app-title">Cinephile<span>GPT</span></div>
+                <button class="logout-btn" onclick="logout()">Logout</button>
+            </header>
+            
+            <div class="sessions-section">
+                <button class="new-chat-btn" onclick="createNewSession()">+ New Conversation</button>
+                <div class="section-title">Past Discussions</div>
+                <ul id="sessions-list" class="sessions-list">
+                    <!-- Loaded dynamically -->
+                </ul>
+            </div>
+            
+            <div class="watchlist-section">
+                <div class="section-title">My Watchlist</div>
+                <ul id="watchlist-list" class="watchlist-list">
+                    <!-- Loaded dynamically -->
+                </ul>
+            </div>
+        </aside>
+
+        <!-- CENTER PANEL: CHAT INTERFACE -->
+        <main class="chat-panel">
+            <header class="chat-header">
+                <div class="bot-avatar">🎬</div>
+                <div class="chat-info">
+                    <h3>CinephileGPT</h3>
+                    <p id="chat-subtitle">Discussing cinema, review archives, and recommendations.</p>
+                </div>
+            </header>
+            
+            <div id="messages-container" class="messages-container">
+                <!-- Chat dialogues -->
+            </div>
+            
+            <div class="input-panel">
+                <form class="input-form" onsubmit="sendMessage(event)">
+                    <input type="text" id="chat-input" class="chat-input" placeholder="Type a message (e.g. recommend a sci-fi thriller directed by Nolan)..." autocomplete="off">
+                    <button type="submit" class="send-btn">Roll</button>
+                </form>
+            </div>
+        </main>
+
+        <!-- RIGHT PANEL: CINEPHILE PROFILE MEMORY -->
+        <aside class="right-sidebar">
+            <h3 class="section-title" style="margin-bottom: 20px;">Cinephile Profile Memory</h3>
+            
+            <div class="memory-box">
+                <h4>Favorite Genres</h4>
+                <div id="mem-fav-genres" class="tags-container">
+                    <!-- Tags dynamic -->
+                </div>
+            </div>
+            
+            <div class="memory-box">
+                <h4>Favorite Directors</h4>
+                <div id="mem-fav-directors" class="tags-container">
+                    <!-- Tags dynamic -->
+                </div>
+            </div>
+            
+            <div class="memory-box">
+                <h4>Favorite Actors</h4>
+                <div id="mem-fav-actors" class="tags-container">
+                    <!-- Tags dynamic -->
+                </div>
+            </div>
+            
+            <div class="memory-box">
+                <h4>Disliked Genres</h4>
+                <div id="mem-dis-genres" class="tags-container">
+                    <!-- Tags dynamic -->
+                </div>
+            </div>
+            
+            <div class="memory-box">
+                <h4>Profile Insights</h4>
+                <div id="mem-notes" class="notes-text">
+                    <!-- Notes dynamic -->
+                </div>
+            </div>
+
+            <button class="refresh-memory-btn" onclick="fetchMemoryProfile()">
+                🔄 Sync Profile Memory
+            </button>
+
+            <!-- MANUAL MEMORY CUSTOMIZER -->
+            <form class="edit-memory-form" onsubmit="saveManualMemory(event)">
+                <h4 style="font-size: 0.8rem; color: var(--text-muted); margin-bottom: 2px;">Manually Add Preference</h4>
+                <input type="text" id="edit-fav-genres" placeholder="Favorite Genres (comma separated)">
+                <input type="text" id="edit-fav-directors" placeholder="Favorite Directors (comma separated)">
+                <input type="text" id="edit-fav-actors" placeholder="Favorite Actors (comma separated)">
+                <input type="text" id="edit-dis-genres" placeholder="Disliked Genres (comma separated)">
+                <button type="submit" class="edit-memory-btn">Update Profile</button>
+            </form>
+        </aside>
+
+    </div>
+
+    <script>
+        let currentAuthTab = 'login';
+        let token = localStorage.getItem('cinephile_token');
+        let currentSessionId = null;
+        let watchlistData = [];
+        let profileData = {
+            favorite_genres: [],
+            favorite_directors: [],
+            favorite_actors: [],
+            disliked_genres: [],
+            general_notes: ""
+        };
+
+        // Initialize state
+        window.addEventListener('DOMContentLoaded', () => {
+            if (token) {
+                showDashboard();
+            } else {
+                showAuth();
+            }
+        });
+
+        // --- AUTH LOGIC ---
+        function setAuthTab(tab) {
+            currentAuthTab = tab;
+            document.getElementById('tab-login').classList.toggle('active', tab === 'login');
+            document.getElementById('tab-register').classList.toggle('active', tab === 'register');
+            document.getElementById('email-field').style.display = tab === 'register' ? 'block' : 'none';
+            document.getElementById('auth-btn').innerText = tab === 'register' ? 'Register' : 'Sign In';
+            document.getElementById('auth-error').style.display = 'none';
+        }
+
+        async function handleAuthSubmit(event) {
+            event.preventDefault();
+            const username = document.getElementById('auth-username').value.trim();
+            const password = document.getElementById('auth-password').value;
+            const email = document.getElementById('auth-email').value.trim();
+            const errorDiv = document.getElementById('auth-error');
+            errorDiv.style.display = 'none';
+
+            try {
+                if (currentAuthTab === 'register') {
+                    // Registration
+                    const regRes = await fetch('/api/auth/register', {
+                        method: 'POST',
+                        headers: { 'Content-Type': 'application/json' },
+                        body: JSON.stringify({ username, email, password })
+                    });
+                    if (!regRes.ok) {
+                        const err = await regRes.json();
+                        throw new Error(err.detail || 'Registration failed.');
+                    }
+                    // Auto login after registration
+                    setAuthTab('login');
+                    document.getElementById('auth-username').value = username;
+                    document.getElementById('auth-password').value = password;
+                    // Trigger submit manually
+                    document.getElementById('auth-btn').click();
+                } else {
+                    // Login
+                    const params = new URLSearchParams();
+                    params.append('username', username);
+                    params.append('password', password);
+
+                    const loginRes = await fetch('/api/auth/login', {
+                        method: 'POST',
+                        headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
+                        body: params
+                    });
+
+                    if (!loginRes.ok) {
+                        throw new Error('Invalid username or password.');
+                    }
+
+                    const data = await loginRes.json();
+                    token = data.access_token;
+                    localStorage.setItem('cinephile_token', token);
+                    showDashboard();
+                }
+            } catch (err) {
+                errorDiv.innerText = err.message;
+                errorDiv.style.display = 'block';
+            }
+        }
+
+        function logout() {
+            localStorage.removeItem('cinephile_token');
+            token = null;
+            currentSessionId = null;
+            document.getElementById('app-layout').style.display = 'none';
+            document.getElementById('auth-overlay').style.display = 'flex';
+        }
+
+        function showAuth() {
+            document.getElementById('app-layout').style.display = 'none';
+            document.getElementById('auth-overlay').style.display = 'flex';
+        }
+
+        async function showDashboard() {
+            document.getElementById('auth-overlay').style.display = 'none';
+            document.getElementById('app-layout').style.display = 'grid';
+            
+            // Fetch initial dashboard data (autoSelect = true)
+            await fetchSessions(true);
+            await fetchWatchlist();
+            await fetchMemoryProfile();
+        }
+
+        // --- SESSIONS LOGIC ---
+        async function fetchSessions(autoSelect = false) {
+            try {
+                const res = await fetch('/api/chat/sessions', {
+                    headers: { 'Authorization': `Bearer ${token}` }
+                });
+                if (!res.ok) {
+                    if (res.status === 401) return logout();
+                    throw new Error();
+                }
+                const sessions = await res.json();
+                renderSessionsList(sessions);
+                
+                // Auto-load the most recent session or create a fresh one if history is empty
+                if (autoSelect && !currentSessionId) {
+                    if (sessions.length > 0) {
+                        loadSession(sessions[0].id);
+                    } else {
+                        createNewSession();
+                    }
+                }
+            } catch (e) {
+                console.error("Failed to fetch sessions");
+            }
+        }
+
+        function renderSessionsList(sessions) {
+            const list = document.getElementById('sessions-list');
+            list.innerHTML = '';
+            
+            if (sessions.length === 0) {
+                list.innerHTML = `<li style="font-size: 0.8rem; color: var(--text-muted); padding: 10px 0;">No active logs.</li>`;
+                return;
+            }
+
+            sessions.forEach(s => {
+                const li = document.createElement('li');
+                li.className = `session-item ${currentSessionId === s.id ? 'active' : ''}`;
+                li.style.display = 'flex';
+                li.style.justifyContent = 'space-between';
+                li.style.alignItems = 'center';
+                
+                // Show first user query or creation date
+                const firstMsg = s.messages.find(m => m.role === 'user');
+                const label = firstMsg ? firstMsg.content : `Session #${s.id.slice(0, 4)}`;
+                
+                const textSpan = document.createElement('span');
+                textSpan.innerText = label;
+                textSpan.title = label;
+                textSpan.style.whiteSpace = 'nowrap';
+                textSpan.style.overflow = 'hidden';
+                textSpan.style.textOverflow = 'ellipsis';
+                textSpan.style.flex = '1';
+                textSpan.style.cursor = 'pointer';
+                textSpan.onclick = () => loadSession(s.id);
+                
+                const delBtn = document.createElement('button');
+                delBtn.innerHTML = '🗑️';
+                delBtn.style.background = 'none';
+                delBtn.style.border = 'none';
+                delBtn.style.color = 'var(--text-muted)';
+                delBtn.style.cursor = 'pointer';
+                delBtn.style.padding = '0 5px';
+                delBtn.style.fontSize = '0.85rem';
+                delBtn.style.transition = 'color 0.2s';
+                delBtn.title = 'Delete Discussion';
+                
+                delBtn.onmouseover = () => delBtn.style.color = 'var(--color-primary)';
+                delBtn.onmouseout = () => delBtn.style.color = 'var(--text-muted)';
+                
+                delBtn.onclick = (e) => {
+                    e.stopPropagation();
+                    deleteSession(s.id);
+                };
+                
+                li.appendChild(textSpan);
+                li.appendChild(delBtn);
+                list.appendChild(li);
+            });
+        }
+
+        async function deleteSession(sessionId) {
+            if (!confirm("Are you sure you want to delete this discussion thread?")) return;
+            try {
+                const res = await fetch(`/api/chat/session/${sessionId}`, {
+                    method: 'DELETE',
+                    headers: { 'Authorization': `Bearer ${token}` }
+                });
+                if (res.ok) {
+                    if (currentSessionId === sessionId) {
+                        currentSessionId = null;
+                        document.getElementById('messages-container').innerHTML = `
+                            <div class="message-row bot">
+                                <div class="message-bubble">
+                                    Discussion deleted. Select or start a new conversation.
+                                </div>
+                            </div>
+                        `;
+                    }
+                    await fetchSessions(false);
+                } else {
+                    alert("Could not delete session.");
+                }
+            } catch (e) {
+                console.error("Error deleting session", e);
+            }
+        }
+
+        async function createNewSession() {
+            try {
+                const res = await fetch('/api/chat/session', {
+                    method: 'POST',
+                    headers: { 'Authorization': `Bearer ${token}` }
+                });
+                const session = await res.json();
+                currentSessionId = session.id;
+                
+                // Refresh list without recursive selection
+                await fetchSessions(false);
+                
+                // Clear chat window
+                document.getElementById('messages-container').innerHTML = `
+                    <div class="message-row bot">
+                        <div class="message-bubble">
+                            Welcome! I'm CinephileGPT. What cinema dimensions are we exploring today? Ask me for recommendations, quiz me on movie trivia, or complain about your disliked directors! Just don't ask me coding questions...
+                        </div>
+                    </div>
+                `;
+            } catch (e) {
+                console.error("Failed to create session");
+            }
+        }
+
+        async function loadSession(sessionId) {
+            currentSessionId = sessionId;
+            
+            // Highlight active in list
+            document.querySelectorAll('.session-item').forEach(item => {
+                item.classList.remove('active');
+            });
+            // Update UI list to reflect active state without recursive selection
+            await fetchSessions(false);
+
+            try {
+                const res = await fetch(`/api/chat/session/${sessionId}`, {
+                    headers: { 'Authorization': `Bearer ${token}` }
+                });
+                const session = await res.json();
+                
+                const container = document.getElementById('messages-container');
+                container.innerHTML = '';
+
+                if (session.messages.length === 0) {
+                    container.innerHTML = `
+                        <div class="message-row bot">
+                            <div class="message-bubble">
+                                Starting a fresh reel. Ask me anything about cinema!
+                            </div>
+                        </div>
+                    `;
+                } else {
+                    session.messages.forEach(msg => {
+                        appendMessageBubble(msg.role, msg.content);
+                    });
+                }
+                scrollChatToBottom();
+            } catch (e) {
+                console.error("Error loading session details", e);
+            }
+        }
+
+        // --- WATCHLIST LOGIC ---
+        async function fetchWatchlist() {
+            try {
+                const res = await fetch('/api/movies/watchlist', {
+                    headers: { 'Authorization': `Bearer ${token}` }
+                });
+                watchlistData = await res.json();
+                renderWatchlist();
+            } catch (e) {
+                console.error("Error fetching watchlist", e);
+            }
+        }
+
+        function renderWatchlist() {
+            const list = document.getElementById('watchlist-list');
+            list.innerHTML = '';
+            
+            if (watchlistData.length === 0) {
+                list.innerHTML = `<li style="font-size: 0.8rem; color: var(--text-muted); text-align: center; padding: 20px 0;">Empty watchlist. Add movies from chat suggestions!</li>`;
+                return;
+            }
+
+            watchlistData.forEach(item => {
+                const li = document.createElement('li');
+                li.className = 'watchlist-item';
+                
+                const yearSuffix = item.movie.release_date ? ` (${new Date(item.movie.release_date).getFullYear()})` : '';
+                
+                li.innerHTML = `
+                    <span class="watchlist-item-name" title="${item.movie.title}${yearSuffix}">${item.movie.title}</span>
+                    <div class="watchlist-item-actions">
+                        <button class="watchlist-action-btn watchlist-btn-like ${item.status === 'liked' ? 'active' : ''}" onclick="toggleWatchlistStatus('${item.movie_id}', '${item.status === 'liked' ? 'watched' : 'liked'}')" title="Like Movie">
+                            ❤️
+                        </button>
+                        <button class="watchlist-action-btn watchlist-btn-del" onclick="deleteFromWatchlist('${item.movie_id}')" title="Remove Movie">
+                            🗑️
+                        </button>
+                    </div>
+                `;
+                list.appendChild(li);
+            });
+        }
+
+        async function toggleWatchlistStatus(movieId, newStatus) {
+            try {
+                await fetch('/api/movies/watchlist', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'Authorization': `Bearer ${token}`
+                    },
+                    body: JSON.stringify({ movie_id: parseInt(movieId), status: newStatus })
+                });
+                await fetchWatchlist();
+            } catch (e) {
+                console.error("Failed updating watchlist item", e);
+            }
+        }
+
+        async function deleteFromWatchlist(movieId) {
+            try {
+                await fetch(`/api/movies/watchlist/${movieId}`, {
+                    method: 'DELETE',
+                    headers: { 'Authorization': `Bearer ${token}` }
+                });
+                await fetchWatchlist();
+            } catch (e) {
+                console.error("Failed removing watchlist item", e);
+            }
+        }
+
+        // --- CINEPHILE PROFILE MEMORY LOGIC ---
+        async function fetchMemoryProfile() {
+            try {
+                const res = await fetch('/api/memory/profile', {
+                    headers: { 'Authorization': `Bearer ${token}` }
+                });
+                profileData = await res.json();
+                renderMemoryTags();
+            } catch (e) {
+                console.error("Error fetching memory profile", e);
+            }
+        }
+
+        function renderMemoryTags() {
+            renderTagContainer('mem-fav-genres', profileData.favorite_genres, 'genres');
+            renderTagContainer('mem-fav-directors', profileData.favorite_directors, 'directors');
+            renderTagContainer('mem-fav-actors', profileData.favorite_actors, 'actors');
+            renderTagContainer('mem-dis-genres', profileData.disliked_genres, 'disliked');
+            
+            const notesBox = document.getElementById('mem-notes');
+            if (profileData.general_notes) {
+                notesBox.innerHTML = profileData.general_notes.replace(/\n/g, '<br>');
+                notesBox.classList.remove('notes-empty');
+            } else {
+                notesBox.innerHTML = 'Preferences extracted dynamically from dialogues will appear here...';
+                notesBox.classList.add('notes-empty');
+            }
+        }
+
+        function renderTagContainer(containerId, list, type) {
+            const container = document.getElementById(containerId);
+            container.innerHTML = '';
+            
+            if (!list || list.length === 0) {
+                container.innerHTML = `<span style="font-size: 0.75rem; color: var(--text-muted); font-style: italic;">None recorded.</span>`;
+                return;
+            }
+
+            list.forEach(item => {
+                const span = document.createElement('span');
+                span.className = 'preference-tag';
+                span.innerHTML = `
+                    ${item}
+                    <span class="preference-tag-delete" onclick="removeMemoryTag('${type}', '${item}')">&times;</span>
+                `;
+                container.appendChild(span);
+            });
+        }
+
+        async function removeMemoryTag(type, itemValue) {
+            let updatedList = [];
+            if (type === 'genres') {
+                updatedList = profileData.favorite_genres.filter(i => i !== itemValue);
+                profileData.favorite_genres = updatedList;
+            } else if (type === 'directors') {
+                updatedList = profileData.favorite_directors.filter(i => i !== itemValue);
+                profileData.favorite_directors = updatedList;
+            } else if (type === 'actors') {
+                updatedList = profileData.favorite_actors.filter(i => i !== itemValue);
+                profileData.favorite_actors = updatedList;
+            } else if (type === 'disliked') {
+                updatedList = profileData.disliked_genres.filter(i => i !== itemValue);
+                profileData.disliked_genres = updatedList;
+            }
+
+            try {
+                await fetch('/api/memory/profile', {
+                    method: 'PUT',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'Authorization': `Bearer ${token}`
+                    },
+                    body: JSON.stringify({
+                        favorite_genres: profileData.favorite_genres,
+                        favorite_directors: profileData.favorite_directors,
+                        favorite_actors: profileData.favorite_actors,
+                        disliked_genres: profileData.disliked_genres
+                    })
+                });
+                renderMemoryTags();
+            } catch (e) {
+                console.error("Failed to delete memory item", e);
+            }
+        }
+
+        async function saveManualMemory(event) {
+            event.preventDefault();
+            
+            const parseVal = (id) => {
+                const val = document.getElementById(id).value.trim();
+                return val ? val.split(',').map(s => s.trim()) : null;
+            };
+
+            const favGenres = parseVal('edit-fav-genres');
+            const favDirs = parseVal('edit-fav-directors');
+            const favActors = parseVal('edit-fav-actors');
+            const disGenres = parseVal('edit-dis-genres');
+
+            const payload = {};
+            if (favGenres) payload.favorite_genres = Array.from(new Set([...profileData.favorite_genres, ...favGenres]));
+            if (favDirs) payload.favorite_directors = Array.from(new Set([...profileData.favorite_directors, ...favDirs]));
+            if (favActors) payload.favorite_actors = Array.from(new Set([...profileData.favorite_actors, ...favActors]));
+            if (disGenres) payload.disliked_genres = Array.from(new Set([...profileData.disliked_genres, ...disGenres]));
+
+            try {
+                const res = await fetch('/api/memory/profile', {
+                    method: 'PUT',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'Authorization': `Bearer ${token}`
+                    },
+                    body: JSON.stringify(payload)
+                });
+                
+                if (res.ok) {
+                    // Reset inputs
+                    document.getElementById('edit-fav-genres').value = '';
+                    document.getElementById('edit-fav-directors').value = '';
+                    document.getElementById('edit-fav-actors').value = '';
+                    document.getElementById('edit-dis-genres').value = '';
+                    
+                    await fetchMemoryProfile();
+                }
+            } catch (e) {
+                console.error("Failed to update profile", e);
+            }
+        }
+
+        // --- CHAT INTERACTION LOGIC ---
+        function appendMessageBubble(role, content) {
+            const container = document.getElementById('messages-container');
+            const row = document.createElement('div');
+            row.className = `message-row ${role === 'user' ? 'user' : 'bot'}`;
+            
+            const bubble = document.createElement('div');
+            bubble.className = 'message-bubble';
+            bubble.innerHTML = parseMarkdown(content);
+            
+            row.appendChild(bubble);
+            container.appendChild(row);
+        }
+
+        function parseMarkdown(text) {
+            // Very simple client-side markdown formatter for bolding and line breaks
+            let html = text
+                .replace(/\*\*(.*?)\*\*/g, '<strong>$1</strong>')
+                .replace(/\*(.*?)\*/g, '<em>$1</em>')
+                .replace(/\r?\n/g, '<br>')
+                .replace(/`([^`]+)`/g, '<code style="background-color: #2b2b3a; padding: 2px 5px; border-radius: 4px;">$1</code>');
+            return html;
+        }
+
+        function scrollChatToBottom() {
+            const container = document.getElementById('messages-container');
+            container.scrollTop = container.scrollHeight;
+        }
+
+        async function sendMessage(event) {
+            event.preventDefault();
+            const input = document.getElementById('chat-input');
+            const text = input.value.trim();
+            if (!text) return;
+            
+            // Clear input
+            input.value = '';
+            
+            // Add user bubble
+            appendMessageBubble('user', text);
+            scrollChatToBottom();
+            
+            // Add initial bot row with typing indicator
+            const container = document.getElementById('messages-container');
+            const row = document.createElement('div');
+            row.className = 'message-row bot';
+            
+            const bubble = document.createElement('div');
+            bubble.className = 'message-bubble';
+            bubble.innerHTML = `<span class="typing-cursor"></span>`;
+            row.appendChild(bubble);
+            container.appendChild(row);
+            scrollChatToBottom();
+
+            let assistantResponseText = "";
+            let movieCarouselContainer = null;
+
+            try {
+                // Request streaming from FastAPI using fetch and ReadableStream
+                const response = await fetch('/api/chat/stream', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'Authorization': `Bearer ${token}`
+                    },
+                    body: JSON.stringify({
+                        session_id: currentSessionId,
+                        message: text
+                    })
+                });
+
+                if (!response.ok) {
+                    throw new Error('Connection lost. Please reset.');
+                }
+
+                const reader = response.body.getReader();
+                const decoder = new TextDecoder();
+                let buffer = '';
+                let currentEvent = 'message';
+
+                while (true) {
+                    const { value, done } = await reader.read();
+                    if (done) break;
+
+                    buffer += decoder.decode(value, { stream: true });
+                    const lines = buffer.split('\n');
+                    buffer = lines.pop(); // keep last chunk in buffer
+
+                    for (const line of lines) {
+                        const trimmed = line.trim();
+                        if (!trimmed) continue;
+
+                        if (trimmed.startsWith('event:')) {
+                            currentEvent = trimmed.replace('event:', '').trim();
+                        } else if (trimmed.startsWith('data:')) {
+                            const dataStr = trimmed.replace('data:', '').trim();
+                            
+                            // Handle events
+                            if (currentEvent === 'meta') {
+                                const meta = JSON.parse(dataStr);
+                                // Save session id if it was newly created
+                                if (!currentSessionId) {
+                                    currentSessionId = meta.session_id;
+                                    fetchSessions();
+                                }
+                            } else if (currentEvent === 'movies') {
+                                const movies = JSON.parse(dataStr);
+                                if (movies && movies.length > 0) {
+                                    // Create the carousel container below the bubble
+                                    movieCarouselContainer = document.createElement('div');
+                                    movieCarouselContainer.className = 'movies-carousel';
+                                    
+                                    movies.forEach(m => {
+                                        const card = document.createElement('div');
+                                        card.className = 'movie-card';
+                                        
+                                        const rating = m.vote_average ? `★ ${m.vote_average}` : '';
+                                        const subtitle = m.release_year ? `${m.release_year} • Dir: ${m.director || 'Unknown'}` : `Dir: ${m.director || 'Unknown'}`;
+                                        
+                                        card.innerHTML = `
+                                            <div class="movie-card-header">
+                                                <div class="movie-card-title">${m.title}</div>
+                                                <div class="movie-card-rating">${rating}</div>
+                                            </div>
+                                            <div class="movie-card-meta">${subtitle}</div>
+                                            <div class="movie-card-genres">
+                                                ${(m.genres || []).slice(0, 2).map(g => `<span class="movie-genre-badge">${g}</span>`).join('')}
+                                            </div>
+                                            <button class="movie-card-add-btn" onclick="addMovieIdToWatchlist(${m.id})">Add Watchlist</button>
+                                        `;
+                                        movieCarouselContainer.appendChild(card);
+                                    });
+                                }
+                            } else if (currentEvent === 'content') {
+                                const contentChunk = JSON.parse(dataStr);
+                                assistantResponseText += contentChunk.text;
+                                
+                                // Render partial response
+                                bubble.innerHTML = parseMarkdown(assistantResponseText) + `<span class="typing-cursor"></span>`;
+                                scrollChatToBottom();
+                            }
+                            
+                            currentEvent = 'message'; // reset
+                        }
+                    }
+                }
+
+                // Stream ended. Remove typing cursor.
+                bubble.innerHTML = parseMarkdown(assistantResponseText);
+                
+                // If we retrieved movies, append the carousel inside the row (below bubble)
+                if (movieCarouselContainer) {
+                    row.appendChild(movieCarouselContainer);
+                }
+                
+                scrollChatToBottom();
+
+                // Trigger profile update and watchlist update since dialogue might have added insights
+                // We add a tiny delay to allow the background thread to finish updating Postgres
+                setTimeout(async () => {
+                    await fetchMemoryProfile();
+                }, 2000);
+
+            } catch (err) {
+                console.error(err);
+                bubble.innerHTML = `<span style="color: var(--color-primary);">[Static Error: Failed to retrieve dialogue stream from backend.]</span>`;
+            }
+        }
+
+        async function addMovieIdToWatchlist(movieId) {
+            try {
+                const res = await fetch('/api/movies/watchlist', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'Authorization': `Bearer ${token}`
+                    },
+                    body: JSON.stringify({ movie_id: movieId, status: 'watchlist' })
+                });
+                if (res.ok) {
+                    alert('Movie added to watchlist!');
+                    await fetchWatchlist();
+                } else {
+                    const err = await res.json();
+                    alert(`Alert: ${err.detail}`);
+                }
+            } catch (e) {
+                console.error("Watchlist additions failed", e);
+            }
+        }
+    </script>
+</body>
+</html>

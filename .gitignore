@@ -1,0 +1,91 @@
+# Byte-compiled / optimized / DLL files
+__pycache__/
+*.py[cod]
+*$py.class
+
+# Virtual Environments
+venv/
+.venv/
+env/
+ENV/
+bin/
+lib/
+include/
+pip-selfcheck.json
+
+# Environment Secrets (DO NOT COMMIT)
+.env
+.env.local
+.env.*
+backend/.env
+backend/.env.local
+backend/.env.*
+!.env.example
+!backend/.env.example
+
+# Local Databases & Vector Stores
+backend/qdrant_db/
+backend/test_qdrant_db/
+backend/test_db/
+*.sqlite
+*.sqlite3
+*.db
+
+# Python Testing & Code Analysis
+.pytest_cache/
+.mypy_cache/
+.ruff_cache/
+.tox/
+.nox/
+.coverage
+.coverage.*
+htmlcov/
+nosetests.xml
+coverage.xml
+*.cover
+*.py,cover
+
+# Python Distribution & Builds
+build/
+develop-eggs/
+dist/
+downloads/
+eggs/
+.eggs/
+lib64/
+parts/
+sdist/
+var/
+wheels/
+share/python-wheels/
+*.egg-info/
+.installed.cfg
+*.egg
+MANIFEST
+
+# Frontend / Node (if applicable in future)
+node_modules/
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+.pnpm-debug.log*
+
+# Operating System Files
+*.DS_Store
+Thumbs.db
+db.properties
+desktop.ini
+
+# IDE, Editor, and System Settings
+.vscode/
+.idea/
+*.suo
+*.ntvs*
+*.njsproj
+*.sln
+*.swp
+*.swo
+
+# Log Files
+*.log
+logs/
