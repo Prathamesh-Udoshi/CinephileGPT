@@ -17,17 +17,9 @@ from app.services.retrieval import upsert_movies_to_qdrant
 def generate_movie_list() -> list:
     """
     Use Gemini API to generate a list of 25 popular or acclaimed movies released between 2024 and 2026.
+    Falls back to Groq API if Gemini fails.
     """
-    if not settings.GEMINI_API_KEY:
-        print("[Error] GEMINI_API_KEY is not set.")
-        return []
-
-    print("Querying Gemini API to generate a list of recent movie titles (2024-2026)...")
-    try:
-        genai.configure(api_key=settings.GEMINI_API_KEY)
-        model = genai.GenerativeModel(settings.GEMINI_MODEL_NAME)
-        
-        prompt = """Generate a JSON list of 25 highly popular or acclaimed movies released between 2024 and 2026.
+    prompt = """Generate a JSON list of 25 highly popular or acclaimed movies released between 2024 and 2026.
 For each movie, output a JSON object containing the exact title of the movie and its release year.
 Make sure to include a diverse set of genres and highly anticipated or released titles (e.g. Dune: Part Two, Furiosa, Deadpool & Wolverine, Inside Out 2, Gladiator II, Oppenheimer, etc.).
 Format example:
@@ -38,17 +30,62 @@ Format example:
 ]
 Output ONLY a valid JSON list. Do not include any markdown styling, backticks, or explanation."""
 
-        response = model.generate_content(
-            prompt,
-            generation_config={"response_mime_type": "application/json"}
-        )
-        
-        movie_list = json.loads(response.text.strip())
-        print(f"Generated list of {len(movie_list)} movies from Gemini.")
-        return movie_list
-    except Exception as e:
-        print(f"[ERROR] Failed to generate movie list from Gemini: {e}")
-        return []
+    # 1. Try Gemini
+    if settings.GEMINI_API_KEY:
+        print("Querying Gemini API to generate a list of recent movie titles (2024-2026)...")
+        try:
+            genai.configure(api_key=settings.GEMINI_API_KEY)
+            model = genai.GenerativeModel(settings.GEMINI_MODEL_NAME)
+            response = model.generate_content(
+                prompt,
+                generation_config={"response_mime_type": "application/json"}
+            )
+            movie_list = json.loads(response.text.strip())
+            print(f"Generated list of {len(movie_list)} movies from Gemini.")
+            return movie_list
+        except Exception as e:
+            print(f"[Warning] Failed to generate movie list from Gemini: {e}. Trying Groq fallback...")
+
+    # 2. Try Groq fallback
+    if settings.GROQ_API_KEY:
+        print("Querying Groq API fallback to generate a list of recent movie titles (2024-2026)...")
+        try:
+            url = "https://api.groq.com/openai/v1/chat/completions"
+            headers = {
+                "Authorization": f"Bearer {settings.GROQ_API_KEY}",
+                "Content-Type": "application/json"
+            }
+            payload = {
+                "model": settings.GROQ_MODEL_NAME,
+                "messages": [
+                    {"role": "user", "content": prompt}
+                ],
+                "response_format": {"type": "json_object"},
+                "temperature": 0.5
+            }
+            r = httpx.post(url, headers=headers, json=payload, timeout=20.0)
+            if r.status_code == 200:
+                data = r.json()
+                content = data["choices"][0]["message"]["content"]
+                movie_list = json.loads(content.strip())
+                # If the LLM returns a dictionary instead of a list, try to extract the list
+                if isinstance(movie_list, dict):
+                    for val in movie_list.values():
+                        if isinstance(val, list):
+                            movie_list = val
+                            break
+                if isinstance(movie_list, list):
+                    print(f"Generated list of {len(movie_list)} movies from Groq fallback.")
+                    return movie_list
+                else:
+                    print(f"[Error] Groq response did not parse as list: {movie_list}")
+            else:
+                print(f"[Error] Groq API returned {r.status_code}: {r.text}")
+        except Exception as e:
+            print(f"[ERROR] Failed to generate movie list from Groq fallback: {e}")
+
+    print("[Error] Both Gemini and Groq API calls failed or are unconfigured.")
+    return []
 
 def fetch_movie_from_omdb(title: str, year: int) -> dict:
     """

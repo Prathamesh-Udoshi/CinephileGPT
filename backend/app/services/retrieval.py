@@ -79,15 +79,8 @@ def search_movies_vector(
     
     filter_must = []
     filter_must_not = []
+    filter_should = []
     
-    if favorite_genres:
-        filter_must.append(
-            FieldCondition(
-                key="genres",
-                match=MatchAny(any=favorite_genres)
-            )
-        )
-        
     if director:
         filter_must.append(
             FieldCondition(
@@ -104,11 +97,20 @@ def search_movies_vector(
             )
         )
         
+    if favorite_genres:
+        filter_should.append(
+            FieldCondition(
+                key="genres",
+                match=MatchAny(any=favorite_genres)
+            )
+        )
+        
     query_filter = None
-    if filter_must or filter_must_not:
+    if filter_must or filter_must_not or filter_should:
         query_filter = Filter(
             must=filter_must if filter_must else None,
-            must_not=filter_must_not if filter_must_not else None
+            must_not=filter_must_not if filter_must_not else None,
+            should=filter_should if filter_should else None
         )
         
     results = client.query_points(
@@ -147,11 +149,14 @@ def hybrid_retrieval(
         return []
     
     # 1. Fetch matches from Qdrant vector database
+    # Note: We do NOT pass favorite_genres to search_movies_vector here because they are a soft preference.
+    # Restricting database search by favorite genres would prevent users from discovering movies of other genres.
+    # Personalization using favorite genres is handled at the LLM level.
     vector_results = search_movies_vector(
         client=client,
         query=query,
         limit=limit * 3, # retrieve candidates
-        favorite_genres=fav_genres,
+        favorite_genres=None,
         disliked_genres=disliked_genres
     )
     

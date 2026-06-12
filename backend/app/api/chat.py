@@ -133,22 +133,24 @@ def stream_chat(
             # Movie query: Fetch profile memory & historical dialogs
             profile = db.query(UserProfile).filter(UserProfile.user_id == current_user.id).first()
             history = db.query(ChatMessage).filter(
-                ChatMessage.session_id == session_id,
-                ChatMessage.role == "user" # get past messages
-            ).order_by(ChatMessage.timestamp.desc()).offset(1).limit(5).all()
+                ChatMessage.session_id == session_id
+            ).order_by(ChatMessage.timestamp.desc()).offset(1).limit(10).all()
             history.reverse() # restore chronological order
             
-            # Fetch retrieved context
-            retrieved_movies = hybrid_retrieval(
-                db=db,
-                client=qdrant,
-                query=payload.message,
-                limit=5,
-                user_profile={
-                    "favorite_genres": profile.favorite_genres if profile else [],
-                    "disliked_genres": profile.disliked_genres if profile else []
-                } if profile else None
-            )
+            # Fetch retrieved context ONLY if the user is explicitly asking for recommendations
+            if intent == "MOVIE_RECOMMENDATION":
+                retrieved_movies = hybrid_retrieval(
+                    db=db,
+                    client=qdrant,
+                    query=payload.message,
+                    limit=5,
+                    user_profile={
+                        "favorite_genres": profile.favorite_genres if profile else [],
+                        "disliked_genres": profile.disliked_genres if profile else []
+                    } if profile else None
+                )
+            else:
+                retrieved_movies = []
             
             # Send movie cards payload to frontend
             movies_payload = [
@@ -172,7 +174,8 @@ def stream_chat(
                 message=payload.message,
                 history=history,
                 user_profile=profile,
-                retrieved_movies=retrieved_movies
+                retrieved_movies=retrieved_movies,
+                intent=intent
             ):
                 full_response_content += chunk
                 yield {

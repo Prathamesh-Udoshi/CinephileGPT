@@ -1,4 +1,5 @@
 import json
+import httpx
 import google.generativeai as genai
 from app.core.config import settings
 
@@ -7,17 +8,10 @@ class IntentClassifierService:
     def classify_intent(cls, message: str) -> str:
         """
         Classifies the user query intent using Gemini API.
+        Falls back to Groq API if Gemini fails (e.g. rate limits or server errors).
         Returns one of: 'NON_MOVIE', 'MOVIE_RECOMMENDATION', 'MOVIE_DISCUSSION'
         """
-        # If the API key is not set, default to MOVIE_DISCUSSION to allow normal operations
-        if not settings.GEMINI_API_KEY:
-            return "MOVIE_DISCUSSION"
-
-        try:
-            genai.configure(api_key=settings.GEMINI_API_KEY)
-            model = genai.GenerativeModel(settings.GEMINI_MODEL_NAME)
-            
-            prompt = f"""You are the intent classification module for CinephileGPT, an AI system that answers ONLY movie-related questions.
+        prompt = f"""You are the intent classification module for CinephileGPT, an AI system that answers ONLY movie-related questions.
 Classify the following user message into exactly one of three categories:
 1. 'NON_MOVIE': The query is NOT about movies, films, actors, directors, cinema history, film scores, writing screenplays, or film recommendations. Examples: coding advice, math problems, recipe help, fitness routines, weather, general travel guides, or general chat that doesn't reference cinema.
 2. 'MOVIE_RECOMMENDATION': The user is explicitly asking for movie recommendations, suggestions, watchlists, or what film they should watch based on criteria (mood, genre, year, similarity to other films).
@@ -29,19 +23,50 @@ User Message: "{message}"
 
 JSON Response:"""
 
-            response = model.generate_content(
-                prompt,
-                generation_config={"response_mime_type": "application/json"}
-            )
-            
-            data = json.loads(response.text.strip())
-            intent = data.get("intent", "MOVIE_DISCUSSION").upper()
-            
-            if intent in ["NON_MOVIE", "MOVIE_RECOMMENDATION", "MOVIE_DISCUSSION"]:
-                return intent
-            return "MOVIE_DISCUSSION"
-            
-        except Exception as e:
-            # Robust error boundary: log the error and default to movie discussion
-            print(f"Error classifying intent: {e}")
-            return "MOVIE_DISCUSSION"
+        # 1. Try Gemini first (if key configured)
+        if settings.GEMINI_API_KEY:
+            try:
+                genai.configure(api_key=settings.GEMINI_API_KEY)
+                model = genai.GenerativeModel(settings.GEMINI_MODEL_NAME)
+                response = model.generate_content(
+                    prompt,
+                    generation_config={"response_mime_type": "application/json"}
+                )
+                data = json.loads(response.text.strip())
+                intent = data.get("intent", "").upper()
+                if intent in ["NON_MOVIE", "MOVIE_RECOMMENDATION", "MOVIE_DISCUSSION"]:
+                    return intent
+            except Exception as e:
+                print(f"[Warning] Gemini intent classification failed: {e}. Attempting Groq fallback...")
+
+        # 2. Try Groq as fallback
+        if settings.GROQ_API_KEY:
+            try:
+                url = "https://api.groq.com/openai/v1/chat/completions"
+                headers = {
+                    "Authorization": f"Bearer {settings.GROQ_API_KEY}",
+                    "Content-Type": "application/json"
+                }
+                payload = {
+                    "model": settings.GROQ_MODEL_NAME,
+                    "messages": [
+                        {"role": "user", "content": prompt}
+                    ],
+                    "response_format": {"type": "json_object"},
+                    "temperature": 0.2
+                }
+                r = httpx.post(url, headers=headers, json=payload, timeout=10.0)
+                if r.status_code == 200:
+                    data = r.json()
+                    content = data["choices"][0]["message"]["content"]
+                    resp_json = json.loads(content.strip())
+                    intent = resp_json.get("intent", "").upper()
+                    if intent in ["NON_MOVIE", "MOVIE_RECOMMENDATION", "MOVIE_DISCUSSION"]:
+                        return intent
+                else:
+                    print(f"[Warning] Groq intent API returned {r.status_code}: {r.text}")
+            except Exception as e:
+                print(f"[Error] Groq intent classification failed: {e}")
+
+        # Default fallback
+        return "MOVIE_DISCUSSION"

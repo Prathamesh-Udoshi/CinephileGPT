@@ -21,7 +21,7 @@ class Settings(BaseSettings):
     )
     
     GEMINI_MODEL_NAME: str = Field(
-        default="gemini-1.5-flash",
+        default="gemini-2.5-flash",
         validation_alias="GEMINI_MODEL_NAME"
     )
     
@@ -53,6 +53,16 @@ class Settings(BaseSettings):
     OMDB_API_KEY: str = Field(
         default="",
         validation_alias="OMDB_API_KEY"
+    )
+    
+    GROQ_API_KEY: str = Field(
+        default="",
+        validation_alias="GROQ_API_KEY"
+    )
+    
+    GROQ_MODEL_NAME: str = Field(
+        default="llama-3.3-70b-versatile",
+        validation_alias="GROQ_MODEL_NAME"
     )
 
 settings = Settings()

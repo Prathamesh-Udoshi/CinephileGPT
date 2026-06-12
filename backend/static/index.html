@@ -844,7 +844,10 @@
             </div>
             
             <div class="memory-box">
-                <h4>Profile Insights</h4>
+                <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 12px;">
+                    <h4 style="margin-bottom: 0;">Profile Insights</h4>
+                    <button onclick="clearProfileInsights()" style="background: none; border: none; color: var(--text-muted); cursor: pointer; font-size: 0.75rem; transition: color 0.2s;" onmouseover="this.style.color='var(--color-primary)'" onmouseout="this.style.color='var(--text-muted)'" title="Delete Profile Insights">🗑️ Clear</button>
+                </div>
                 <div id="mem-notes" class="notes-text">
                     <!-- Notes dynamic -->
                 </div>
@@ -1220,7 +1223,7 @@
         // --- CINEPHILE PROFILE MEMORY LOGIC ---
         async function fetchMemoryProfile() {
             try {
-                const res = await fetch('/api/memory/profile', {
+                const res = await fetch(`/api/memory/profile?t=${Date.now()}`, {
                     headers: { 'Authorization': `Bearer ${token}` }
                 });
                 profileData = await res.json();
@@ -1299,6 +1302,30 @@
                 renderMemoryTags();
             } catch (e) {
                 console.error("Failed to delete memory item", e);
+            }
+        }
+
+        async function clearProfileInsights() {
+            if (!confirm("Are you sure you want to delete all Profile Insights?")) return;
+            try {
+                const res = await fetch('/api/memory/profile', {
+                    method: 'PUT',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'Authorization': `Bearer ${token}`
+                    },
+                    body: JSON.stringify({
+                        general_notes: ""
+                    })
+                });
+                if (res.ok) {
+                    profileData.general_notes = "";
+                    renderMemoryTags();
+                } else {
+                    alert("Could not clear Profile Insights.");
+                }
+            } catch (e) {
+                console.error("Failed to clear insights", e);
             }
         }
 
@@ -1502,11 +1529,10 @@
                 
                 scrollChatToBottom();
 
-                // Trigger profile update and watchlist update since dialogue might have added insights
-                // We add a tiny delay to allow the background thread to finish updating Postgres
-                setTimeout(async () => {
-                    await fetchMemoryProfile();
-                }, 2000);
+                // Trigger staggered profile updates to capture the background LLM database commits
+                setTimeout(async () => { await fetchMemoryProfile(); }, 1500);
+                setTimeout(async () => { await fetchMemoryProfile(); }, 3500);
+                setTimeout(async () => { await fetchMemoryProfile(); }, 6000);
 
             } catch (err) {
                 console.error(err);

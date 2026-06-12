@@ -39,9 +39,9 @@ graph TD
 
 *   **Witty Cinephile Persona**: Converses like a dedicated film buff, referencing cinematography styles, director cuts, and actors, while humorously rejecting non-movie queries.
 *   **Zero-Dependency Local Vector Search**: Uses local `sentence-transformers/all-MiniLM-L6-v2` embeddings combined with a file-based Qdrant client (`qdrant-client` path storage), removing any Docker container requirements.
-*   **Hybrid RAG Pipeline**: Blends dense vector search matching with PostgreSQL relational table queries (filtering out disliked genres or directors dynamically).
+*   **Hybrid RAG Pipeline**: Blends dense vector search matching with PostgreSQL relational table queries (strictly filtering out disliked genres dynamically, while keeping favorite genres as soft personalization parameters at the LLM level to allow unrestricted searching).
 *   **Multi-Tiered Memory & Profiling**:
-    *   *Short-term Memory*: Preserves the last 5 turns of local chat session dialogs.
+    *   *Short-term Memory*: Preserves the last 10 messages (5 full turns of alternating user/assistant dialogs) to maintain perfect conversational continuity.
     *   *Long-term Memory*: An asynchronous background task analyzes conversation turns using Gemini API to extract newly mentioned preferences and updates the PostgreSQL user profiles.
 *   **Interactive Cinema Dashboard**:
     *   Streamed responses (SSE tokens) rendered inside clean dialogue blocks.
@@ -108,6 +108,22 @@ python -m venv venv
     ```cmd
     venv\Scripts\activate.bat
     ```
+
+### 1.1. Configure Your IDE Interpreter (VS Code / Cursor)
+To prevent your editor from complaining about missing imports (like `qdrant_client`, `sentence_transformers`, etc.), configure your workspace to use the virtual environment's Python interpreter.
+
+Create or check the `.vscode/settings.json` file in the workspace root:
+```json
+{
+  "python.defaultInterpreterPath": "${workspaceFolder}/backend/venv/Scripts/python.exe",
+  "python.analysis.extraPaths": [
+    "${workspaceFolder}/backend"
+  ],
+  "python.autoComplete.extraPaths": [
+    "${workspaceFolder}/backend"
+  ]
+}
+```
 
 ### 2. Install Project Dependencies
 With the virtual environment active, install the Python requirements:
