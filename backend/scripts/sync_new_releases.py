@@ -147,11 +147,6 @@ def parse_omdb_movie(data: dict) -> dict:
             except ValueError:
                 pass
 
-        # Poster Path
-        poster_path = data.get("Poster", "")
-        if poster_path == "N/A":
-            poster_path = None
-
         return {
             "id": movie_id,
             "title": data.get("Title"),
@@ -162,8 +157,7 @@ def parse_omdb_movie(data: dict) -> dict:
             "overview": data.get("Plot") if data.get("Plot") != "N/A" else "No overview available.",
             "runtime": runtime,
             "vote_average": vote_average,
-            "popularity": popularity,
-            "poster_path": poster_path
+            "popularity": popularity
         }
     except Exception as e:
         print(f"  [Error] Parsing failed for {data.get('Title')}: {e}")

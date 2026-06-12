@@ -114,12 +114,13 @@ def sync_new_releases(
 @router.post("/seed-all-time", status_code=status.HTTP_202_ACCEPTED)
 def seed_all_time(
     background_tasks: BackgroundTasks,
+    limit: int = 1500,
     current_user: User = Depends(get_current_user)
 ):
     """
     Trigger the all-time popular English movie seeding pipeline in the background.
     """
-    background_tasks.add_task(run_all_time_seeding)
-    return {"message": "All-time movie seeding pipeline started in the background."}
+    background_tasks.add_task(run_all_time_seeding, limit=limit)
+    return {"message": f"All-time movie seeding pipeline (limit={limit}) started in the background."}
 
 

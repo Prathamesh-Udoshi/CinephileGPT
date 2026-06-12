@@ -158,7 +158,6 @@ def stream_chat(
                     "release_year": m.release_date.year if m.release_date else None,
                     "director": m.director,
                     "genres": m.genres,
-                    "poster_path": m.poster_path,
                     "vote_average": float(m.vote_average) if m.vote_average else None
                 }
                 for m in retrieved_movies

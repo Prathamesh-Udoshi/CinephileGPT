@@ -210,6 +210,7 @@ def seed_db():
     try:
         print(f"Adding {len(SEED_MOVIES)} movies to relational database...")
         for m_data in SEED_MOVIES:
+            m_data.pop("poster_path", None)
             existing = db.query(Movie).filter(Movie.id == m_data["id"]).first()
             if not existing:
                 new_movie = Movie(**m_data)

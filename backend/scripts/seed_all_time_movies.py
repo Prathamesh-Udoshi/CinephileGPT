@@ -94,8 +94,7 @@ def download_and_parse_dataset(limit: int = 1500) -> list:
             "overview": overview,
             "runtime": runtime,
             "vote_average": vote_average,
-            "popularity": popularity,
-            "poster_path": None  # Not present in this CSV, will default to None
+            "popularity": popularity
         })
 
     # Sort by popularity descending and keep top N
@@ -169,4 +168,10 @@ def run_all_time_seeding(limit: int = 1500) -> int:
     return len(synced_movies)
 
 if __name__ == "__main__":
-    run_all_time_seeding()
+    limit = 1500
+    if len(sys.argv) > 1:
+        try:
+            limit = int(sys.argv[1])
+        except ValueError:
+            print(f"[Warning] Invalid limit argument '{sys.argv[1]}', using default: {limit}")
+    run_all_time_seeding(limit=limit)

@@ -18,7 +18,6 @@ class Movie(Base):
     runtime = Column(Integer)
     vote_average = Column(Numeric(3, 1))
     popularity = Column(Numeric(8, 2))
-    poster_path = Column(String(255))
 
     # Relationships
     watchlists = relationship("UserWatchlist", back_populates="movie", cascade="all, delete-orphan")

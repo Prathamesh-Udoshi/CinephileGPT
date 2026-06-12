@@ -14,7 +14,6 @@ class MovieBase(BaseModel):
     runtime: Optional[int] = None
     vote_average: Optional[float] = None
     popularity: Optional[float] = None
-    poster_path: Optional[str] = None
 
 class MovieResponse(MovieBase):
     class Config:
