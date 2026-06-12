@@ -49,5 +49,10 @@ class Settings(BaseSettings):
         default="all-MiniLM-L6-v2",
         validation_alias="EMBEDDING_MODEL_NAME"
     )
+    
+    OMDB_API_KEY: str = Field(
+        default="",
+        validation_alias="OMDB_API_KEY"
+    )
 
 settings = Settings()

@@ -1,8 +1,10 @@
-from fastapi import APIRouter, Depends, HTTPException, status
+from fastapi import APIRouter, Depends, HTTPException, status, BackgroundTasks
 from sqlalchemy.orm import Session
 from typing import List
 from app.core.database import get_db
 from app.core.security import get_current_user
+from scripts.sync_new_releases import run_sync
+from scripts.seed_all_time_movies import run_all_time_seeding
 from app.models.user import User
 from app.models.movie import Movie, UserWatchlist
 from app.schemas.movie import MovieResponse, WatchlistCreate, WatchlistResponse, WatchlistUpdate
@@ -97,3 +99,27 @@ def remove_from_watchlist(
     db.delete(item)
     db.commit()
     return None
+
+@router.post("/sync-new-releases", status_code=status.HTTP_202_ACCEPTED)
+def sync_new_releases(
+    background_tasks: BackgroundTasks,
+    current_user: User = Depends(get_current_user)
+):
+    """
+    Trigger the Gemini + OMDb synchronization pipeline in the background.
+    """
+    background_tasks.add_task(run_sync)
+    return {"message": "Movie synchronization pipeline started in the background."}
+
+@router.post("/seed-all-time", status_code=status.HTTP_202_ACCEPTED)
+def seed_all_time(
+    background_tasks: BackgroundTasks,
+    current_user: User = Depends(get_current_user)
+):
+    """
+    Trigger the all-time popular English movie seeding pipeline in the background.
+    """
+    background_tasks.add_task(run_all_time_seeding)
+    return {"message": "All-time movie seeding pipeline started in the background."}
+
+
