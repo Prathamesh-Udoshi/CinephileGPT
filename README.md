@@ -29,7 +29,7 @@ graph TD
     Composer --> LLM[Gemini 2.5 Flash]
     LLM --> Stream[Stream Engine]
     Stream --> API
-    LLM --> |Extract Preferences Async| MemoryUpdater[Memory Consolidation Job]
+    LLM --> |Extract Preferences (Real-time)| MemoryUpdater[Memory Consolidation]
     MemoryUpdater --> Postgres
 ```
 
@@ -42,7 +42,7 @@ graph TD
 *   **Hybrid RAG Pipeline**: Blends dense vector search matching with PostgreSQL relational table queries (strictly filtering out disliked genres dynamically, while keeping favorite genres as soft personalization parameters at the LLM level to allow unrestricted searching).
 *   **Multi-Tiered Memory & Profiling**:
     *   *Short-term Memory*: Preserves the last 10 messages (5 full turns of alternating user/assistant dialogs) to maintain perfect conversational continuity.
-    *   *Long-term Memory*: An asynchronous background task analyzes conversation turns using Gemini API to extract newly mentioned preferences and updates the PostgreSQL user profiles.
+    *   *Long-term Memory*: A real-time preference extraction mechanism that runs inline at the end of the streaming turn, utilizing Gemini API to extract newly mentioned preferences and update the PostgreSQL user profiles, immediately pushing a synchronization event (`memory_update`) to the frontend.
 *   **Interactive Cinema Dashboard**:
     *   Streamed responses (SSE tokens) rendered inside clean dialogue blocks.
     *   Interactive movie cards rendered dynamically on search hits (with poster previews and direct "Add to Watchlist" quick-actions).

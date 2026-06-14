@@ -19,6 +19,13 @@ Core Rules:
 6. Brevity is key: Keep your responses concise, sharp, and focused. Avoid overly long explanations or rambling essays. Keep the total response length short.
 """
 
+GEMINI_SAFETY_SETTINGS = {
+    "HARM_CATEGORY_HARASSMENT": "BLOCK_NONE",
+    "HARM_CATEGORY_HATE_SPEECH": "BLOCK_NONE",
+    "HARM_CATEGORY_SEXUALLY_EXPLICIT": "BLOCK_NONE",
+    "HARM_CATEGORY_DANGEROUS_CONTENT": "BLOCK_NONE",
+}
+
 REFUSAL_PROMPT = """The user has asked a query unrelated to movies. 
 Generate a witty, humorous, movie-obsessed refusal. Explain that you only discuss cinema. 
 Compare their request to a boring, generic, or bad movie trope (e.g., 'This coding question feels like the screenplay for a straight-to-DVD sequel nobody wanted'), and redirect them to discuss films. Keep it extremely brief (maximum 1 or 2 sentences) and highly entertaining. Do NOT write more than two sentences.
@@ -83,12 +90,17 @@ def get_refusal_stream(message: str) -> Generator[str, None, None]:
             genai.configure(api_key=settings.GEMINI_API_KEY)
             model = genai.GenerativeModel(
                 settings.GEMINI_MODEL_NAME,
-                system_instruction=CINEPHILE_SYSTEM_INSTRUCTIONS
+                system_instruction=CINEPHILE_SYSTEM_INSTRUCTIONS,
+                safety_settings=GEMINI_SAFETY_SETTINGS
             )
             response = model.generate_content(prompt, stream=True)
             for chunk in response:
-                if chunk.text:
-                    yield chunk.text
+                try:
+                    text = chunk.text
+                except (ValueError, IndexError) as error:
+                    raise ValueError(f"Empty or blocked response chunk ({error})")
+                if text:
+                    yield text
             return # Succeeded
         except Exception as e:
             print(f"[Warning] Gemini refusal stream failed: {e}. Falling back to Groq...")
@@ -209,12 +221,17 @@ CinephileGPT response:"""
             genai.configure(api_key=settings.GEMINI_API_KEY)
             model = genai.GenerativeModel(
                 settings.GEMINI_MODEL_NAME,
-                system_instruction=CINEPHILE_SYSTEM_INSTRUCTIONS
+                system_instruction=CINEPHILE_SYSTEM_INSTRUCTIONS,
+                safety_settings=GEMINI_SAFETY_SETTINGS
             )
             response = model.generate_content(full_prompt, stream=True)
             for chunk in response:
-                if chunk.text:
-                    yield chunk.text
+                try:
+                    text = chunk.text
+                except (ValueError, IndexError) as error:
+                    raise ValueError(f"Empty or blocked response chunk ({error})")
+                if text:
+                    yield text
             return # Succeeded
         except Exception as e:
             print(f"[Warning] Gemini chat stream failed: {e}. Falling back to Groq...")
@@ -279,12 +296,19 @@ Updated JSON:"""
         if settings.GEMINI_API_KEY:
             try:
                 genai.configure(api_key=settings.GEMINI_API_KEY)
-                model = genai.GenerativeModel(settings.GEMINI_MODEL_NAME)
+                model = genai.GenerativeModel(
+                    settings.GEMINI_MODEL_NAME,
+                    safety_settings=GEMINI_SAFETY_SETTINGS
+                )
                 response = model.generate_content(
                     extraction_prompt,
                     generation_config={"response_mime_type": "application/json"}
                 )
-                updated_data = json.loads(response.text.strip())
+                try:
+                    text = response.text
+                except (ValueError, IndexError) as error:
+                    raise ValueError(f"Empty or blocked response ({error})")
+                updated_data = json.loads(text.strip())
             except Exception as e:
                 print(f"[Warning] Gemini memory extraction failed: {e}. Trying Groq fallback...")
 

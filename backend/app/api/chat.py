@@ -194,16 +194,26 @@ def stream_chat(
         finally:
             gen_db.close()
             
-        # 5. Dispatch background task to consolidate preferences ONLY if the query hints at a user preference
+        # 5. Consolidate preferences inside the stream if the query hints at a user preference
         pref_keywords = ["like", "love", "dislike", "hate", "prefer", "favorite", "favourite", "director", "actor", "genre", "cinematographer", "writer", "fan of"]
         user_msg_lower = payload.message.lower()
         if any(kw in user_msg_lower for kw in pref_keywords):
-            background_tasks.add_task(
-                background_memory_consolidate,
-                current_user.id,
-                payload.message,
-                full_response_content
-            )
+            gen_db_mem = SessionLocal()
+            try:
+                extract_and_consolidate_memory(
+                    gen_db_mem,
+                    str(current_user.id),
+                    payload.message,
+                    full_response_content
+                )
+                yield {
+                    "event": "memory_update",
+                    "data": json.dumps({"status": "updated"})
+                }
+            except Exception as e:
+                print(f"[Warning] Real-time memory consolidation failed: {e}")
+            finally:
+                gen_db_mem.close()
         
     return EventSourceResponse(sse_event_generator())
 

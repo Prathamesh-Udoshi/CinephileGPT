@@ -1512,6 +1512,8 @@
                                 // Render partial response
                                 bubble.innerHTML = parseMarkdown(assistantResponseText) + `<span class="typing-cursor"></span>`;
                                 scrollChatToBottom();
+                            } else if (currentEvent === 'memory_update') {
+                                await fetchMemoryProfile();
                             }
                             
                             currentEvent = 'message'; // reset
@@ -1529,10 +1531,8 @@
                 
                 scrollChatToBottom();
 
-                // Trigger staggered profile updates to capture the background LLM database commits
-                setTimeout(async () => { await fetchMemoryProfile(); }, 1500);
-                setTimeout(async () => { await fetchMemoryProfile(); }, 3500);
-                setTimeout(async () => { await fetchMemoryProfile(); }, 6000);
+                // Safety fallback timeout to ensure profile is synced
+                setTimeout(async () => { await fetchMemoryProfile(); }, 2500);
 
             } catch (err) {
                 console.error(err);

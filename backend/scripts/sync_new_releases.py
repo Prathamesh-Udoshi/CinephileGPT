@@ -35,12 +35,24 @@ Output ONLY a valid JSON list. Do not include any markdown styling, backticks, o
         print("Querying Gemini API to generate a list of recent movie titles (2024-2026)...")
         try:
             genai.configure(api_key=settings.GEMINI_API_KEY)
-            model = genai.GenerativeModel(settings.GEMINI_MODEL_NAME)
+            model = genai.GenerativeModel(
+                settings.GEMINI_MODEL_NAME,
+                safety_settings={
+                    "HARM_CATEGORY_HARASSMENT": "BLOCK_NONE",
+                    "HARM_CATEGORY_HATE_SPEECH": "BLOCK_NONE",
+                    "HARM_CATEGORY_SEXUALLY_EXPLICIT": "BLOCK_NONE",
+                    "HARM_CATEGORY_DANGEROUS_CONTENT": "BLOCK_NONE",
+                }
+            )
             response = model.generate_content(
                 prompt,
                 generation_config={"response_mime_type": "application/json"}
             )
-            movie_list = json.loads(response.text.strip())
+            try:
+                text = response.text
+            except (ValueError, IndexError) as error:
+                raise ValueError(f"Empty or blocked response ({error})")
+            movie_list = json.loads(text.strip())
             print(f"Generated list of {len(movie_list)} movies from Gemini.")
             return movie_list
         except Exception as e:
