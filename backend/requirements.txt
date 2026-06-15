@@ -17,3 +17,10 @@ email-validator>=2.0.0
 python-multipart>=0.0.9
 
 
+// Recommendation Score = Relevance + Explanation + Diversity
+// Personality Consistency
+// Refusal Compliance %
+// Retrieval = Recall@K, Hit Rate(Did at least one expected movie appear?), MRR(Measures ranking quality)
+
+// streamlit run evaluation/dashboard/dashboard.py
+// python evaluation/runner.py --limit 2
