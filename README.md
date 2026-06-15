@@ -29,7 +29,7 @@ graph TD
     Composer --> LLM[Gemini 2.5 Flash]
     LLM --> Stream[Stream Engine]
     Stream --> API
-    LLM --> |Extract Preferences (Real-time)| MemoryUpdater[Memory Consolidation]
+    LLM --> |"Extract Preferences (Real-time)"| MemoryUpdater[Memory Consolidation]
     MemoryUpdater --> Postgres
 ```
 
