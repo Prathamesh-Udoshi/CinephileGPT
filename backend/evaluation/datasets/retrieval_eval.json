@@ -1,0 +1,659 @@
+[
+    {
+        "id": "ret_001",
+        "category": "similar_movie",
+        "query": "Movies like Interstellar",
+        "expected_movies": [
+            "Arrival",
+            "Contact",
+            "Moon",
+            "Ad Astra"
+        ],
+        "must_not_retrieve": [
+            "The Hangover",
+            "Toy Story"
+        ]
+    },
+    {
+        "id": "ret_002",
+        "category": "similar_movie",
+        "query": "Movies similar to Prisoners",
+        "expected_movies": [
+            "Zodiac",
+            "Memories of Murder",
+            "Gone Baby Gone",
+            "Mystic River"
+        ],
+        "must_not_retrieve": [
+            "La La Land"
+        ]
+    },
+    {
+        "id": "ret_003",
+        "category": "similar_movie",
+        "query": "Movies like Arrival",
+        "expected_movies": [
+            "Contact",
+            "Interstellar",
+            "Annihilation",
+            "Moon"
+        ],
+        "must_not_retrieve": [
+            "Fast Five"
+        ]
+    },
+    {
+        "id": "ret_004",
+        "category": "similar_movie",
+        "query": "Movies similar to Zodiac",
+        "expected_movies": [
+            "Memories of Murder",
+            "Prisoners",
+            "The Girl with the Dragon Tattoo"
+        ],
+        "must_not_retrieve": [
+            "Finding Nemo"
+        ]
+    },
+    {
+        "id": "ret_005",
+        "category": "similar_movie",
+        "query": "Movies like Blade Runner 2049",
+        "expected_movies": [
+            "Ex Machina",
+            "Ghost in the Shell",
+            "Arrival",
+            "Moon"
+        ],
+        "must_not_retrieve": [
+            "Home Alone"
+        ]
+    },
+    {
+        "id": "ret_006",
+        "category": "genre",
+        "query": "Psychological thriller movies",
+        "expected_movies": [
+            "Shutter Island",
+            "Black Swan",
+            "Gone Girl",
+            "Fight Club"
+        ],
+        "must_not_retrieve": [
+            "Toy Story"
+        ]
+    },
+    {
+        "id": "ret_007",
+        "category": "genre",
+        "query": "Crime investigation movies",
+        "expected_movies": [
+            "Zodiac",
+            "Prisoners",
+            "Memories of Murder",
+            "Se7en"
+        ],
+        "must_not_retrieve": [
+            "Frozen"
+        ]
+    },
+    {
+        "id": "ret_008",
+        "category": "genre",
+        "query": "Space exploration movies",
+        "expected_movies": [
+            "Interstellar",
+            "Ad Astra",
+            "The Martian",
+            "Apollo 13"
+        ],
+        "must_not_retrieve": [
+            "The Notebook"
+        ]
+    },
+    {
+        "id": "ret_009",
+        "category": "genre",
+        "query": "Courtroom drama movies",
+        "expected_movies": [
+            "12 Angry Men",
+            "A Few Good Men",
+            "The Verdict"
+        ],
+        "must_not_retrieve": [
+            "John Wick"
+        ]
+    },
+    {
+        "id": "ret_010",
+        "category": "genre",
+        "query": "Survival movies",
+        "expected_movies": [
+            "The Revenant",
+            "Cast Away",
+            "127 Hours",
+            "The Grey"
+        ],
+        "must_not_retrieve": [
+            "Superbad"
+        ]
+    },
+    {
+        "id": "ret_011",
+        "category": "mood",
+        "query": "Movies that will make me think",
+        "expected_movies": [
+            "Arrival",
+            "Ex Machina",
+            "The Truman Show",
+            "Moon"
+        ],
+        "must_not_retrieve": [
+            "Transformers"
+        ]
+    },
+    {
+        "id": "ret_012",
+        "category": "mood",
+        "query": "Emotionally powerful movies",
+        "expected_movies": [
+            "Manchester by the Sea",
+            "Aftersun",
+            "The Green Mile",
+            "Grave of the Fireflies"
+        ],
+        "must_not_retrieve": [
+            "Scary Movie"
+        ]
+    },
+    {
+        "id": "ret_013",
+        "category": "mood",
+        "query": "Feel-good movies",
+        "expected_movies": [
+            "Paddington 2",
+            "Chef",
+            "The Secret Life of Walter Mitty"
+        ],
+        "must_not_retrieve": [
+            "Requiem for a Dream"
+        ]
+    },
+    {
+        "id": "ret_014",
+        "category": "mood",
+        "query": "Dark and disturbing movies",
+        "expected_movies": [
+            "Se7en",
+            "Prisoners",
+            "Nightcrawler"
+        ],
+        "must_not_retrieve": [
+            "Cars"
+        ]
+    },
+    {
+        "id": "ret_015",
+        "category": "mood",
+        "query": "Relaxing movies",
+        "expected_movies": [
+            "Chef",
+            "Paterson",
+            "Before Sunrise"
+        ],
+        "must_not_retrieve": [
+            "Saw"
+        ]
+    },
+    {
+        "id": "ret_016",
+        "category": "theme",
+        "query": "Movies about artificial intelligence",
+        "expected_movies": [
+            "Ex Machina",
+            "Her",
+            "Blade Runner 2049",
+            "A.I. Artificial Intelligence"
+        ],
+        "must_not_retrieve": [
+            "Rocky"
+        ]
+    },
+    {
+        "id": "ret_017",
+        "category": "theme",
+        "query": "Movies about time travel",
+        "expected_movies": [
+            "Looper",
+            "Predestination",
+            "Primer",
+            "About Time"
+        ],
+        "must_not_retrieve": [
+            "Titanic"
+        ]
+    },
+    {
+        "id": "ret_018",
+        "category": "theme",
+        "query": "Movies about obsession",
+        "expected_movies": [
+            "Whiplash",
+            "Black Swan",
+            "Nightcrawler"
+        ],
+        "must_not_retrieve": [
+            "Finding Dory"
+        ]
+    },
+    {
+        "id": "ret_019",
+        "category": "theme",
+        "query": "Movies about loneliness",
+        "expected_movies": [
+            "Her",
+            "Moon",
+            "Lost in Translation"
+        ],
+        "must_not_retrieve": [
+            "Rush Hour"
+        ]
+    },
+    {
+        "id": "ret_020",
+        "category": "theme",
+        "query": "Movies about social inequality",
+        "expected_movies": [
+            "Parasite",
+            "Snowpiercer",
+            "Joker"
+        ],
+        "must_not_retrieve": [
+            "Shrek"
+        ]
+    },
+    {
+        "id": "ret_021",
+        "category": "director_actor",
+        "query": "Christopher Nolan movies",
+        "expected_movies": [
+            "Interstellar",
+            "Inception",
+            "The Prestige",
+            "Memento"
+        ],
+        "must_not_retrieve": [
+            "Pulp Fiction"
+        ]
+    },
+    {
+        "id": "ret_022",
+        "category": "director_actor",
+        "query": "David Fincher movies",
+        "expected_movies": [
+            "Se7en",
+            "Zodiac",
+            "Gone Girl",
+            "Fight Club"
+        ],
+        "must_not_retrieve": [
+            "The Godfather"
+        ]
+    },
+    {
+        "id": "ret_023",
+        "category": "director_actor",
+        "query": "Jake Gyllenhaal movies",
+        "expected_movies": [
+            "Nightcrawler",
+            "Prisoners",
+            "Source Code"
+        ],
+        "must_not_retrieve": [
+            "Toy Story 3"
+        ]
+    },
+    {
+        "id": "ret_024",
+        "category": "director_actor",
+        "query": "Leonardo DiCaprio movies",
+        "expected_movies": [
+            "Inception",
+            "The Revenant",
+            "Shutter Island",
+            "The Departed"
+        ],
+        "must_not_retrieve": [
+            "Frozen II"
+        ]
+    },
+    {
+        "id": "ret_025",
+        "category": "director_actor",
+        "query": "Denis Villeneuve movies",
+        "expected_movies": [
+            "Arrival",
+            "Blade Runner 2049",
+            "Sicario",
+            "Dune"
+        ],
+        "must_not_retrieve": [
+            "The Lion King"
+        ]
+    },
+    {
+        "id": "ret_026",
+        "category": "hidden_gems",
+        "query": "Underrated science fiction movies",
+        "expected_movies": [
+            "Moon",
+            "Coherence",
+            "Predestination",
+            "Upgrade"
+        ],
+        "must_not_retrieve": [
+            "Avengers: Endgame"
+        ]
+    },
+    {
+        "id": "ret_027",
+        "category": "hidden_gems",
+        "query": "Hidden gem thrillers",
+        "expected_movies": [
+            "The Invitation",
+            "Blue Ruin",
+            "Calibre",
+            "The Guilty"
+        ],
+        "must_not_retrieve": [
+            "The Dark Knight"
+        ]
+    },
+    {
+        "id": "ret_028",
+        "category": "hidden_gems",
+        "query": "Underrated emotional dramas",
+        "expected_movies": [
+            "Aftersun",
+            "Short Term 12",
+            "Leave No Trace"
+        ],
+        "must_not_retrieve": [
+            "Titanic"
+        ]
+    },
+    {
+        "id": "ret_029",
+        "category": "hidden_gems",
+        "query": "Movies most people haven't seen but should",
+        "expected_movies": [
+            "Incendies",
+            "Coherence",
+            "The Hunt",
+            "A Separation"
+        ],
+        "must_not_retrieve": [
+            "Avatar"
+        ]
+    },
+    {
+        "id": "ret_030",
+        "category": "hidden_gems",
+        "query": "Lesser known crime thrillers",
+        "expected_movies": [
+            "Marshland",
+            "The Secret in Their Eyes",
+            "Blue Ruin"
+        ],
+        "must_not_retrieve": [
+            "The Godfather"
+        ]
+    },
+    {
+        "id": "ret_031",
+        "category": "foreign_cinema",
+        "query": "Korean thrillers",
+        "expected_movies": [
+            "Memories of Murder",
+            "The Chaser",
+            "I Saw the Devil",
+            "Oldboy"
+        ],
+        "must_not_retrieve": [
+            "The Hangover"
+        ]
+    },
+    {
+        "id": "ret_032",
+        "category": "foreign_cinema",
+        "query": "Japanese psychological movies",
+        "expected_movies": [
+            "Perfect Blue",
+            "Cure",
+            "Confessions"
+        ],
+        "must_not_retrieve": [
+            "Fast X"
+        ]
+    },
+    {
+        "id": "ret_033",
+        "category": "foreign_cinema",
+        "query": "International movies like Parasite",
+        "expected_movies": [
+            "Burning",
+            "Shoplifters",
+            "A Separation"
+        ],
+        "must_not_retrieve": [
+            "Cars 2"
+        ]
+    },
+    {
+        "id": "ret_034",
+        "category": "foreign_cinema",
+        "query": "European mystery movies",
+        "expected_movies": [
+            "The Invisible Guest",
+            "The Secret in Their Eyes",
+            "Tell No One"
+        ],
+        "must_not_retrieve": [
+            "Toy Story"
+        ]
+    },
+    {
+        "id": "ret_035",
+        "category": "foreign_cinema",
+        "query": "Foreign language crime dramas",
+        "expected_movies": [
+            "Memories of Murder",
+            "Marshland",
+            "A Prophet"
+        ],
+        "must_not_retrieve": [
+            "Shrek"
+        ]
+    },
+    {
+        "id": "ret_036",
+        "category": "multi_constraint",
+        "query": "Sci-fi movies after 2015 with strong emotional themes",
+        "expected_movies": [
+            "Arrival",
+            "Blade Runner 2049",
+            "After Yang"
+        ],
+        "must_not_retrieve": [
+            "Alien"
+        ]
+    },
+    {
+        "id": "ret_037",
+        "category": "multi_constraint",
+        "query": "Crime thrillers that are not extremely violent",
+        "expected_movies": [
+            "Mystic River",
+            "Gone Baby Gone",
+            "The Lincoln Lawyer"
+        ],
+        "must_not_retrieve": [
+            "Saw"
+        ]
+    },
+    {
+        "id": "ret_038",
+        "category": "multi_constraint",
+        "query": "Horror movies with minimal jump scares",
+        "expected_movies": [
+            "The Witch",
+            "Hereditary",
+            "The Lighthouse"
+        ],
+        "must_not_retrieve": [
+            "The Nun"
+        ]
+    },
+    {
+        "id": "ret_039",
+        "category": "multi_constraint",
+        "query": "Movies under two hours that make you think",
+        "expected_movies": [
+            "Coherence",
+            "Moon",
+            "Primer"
+        ],
+        "must_not_retrieve": [
+            "The Irishman"
+        ]
+    },
+    {
+        "id": "ret_040",
+        "category": "multi_constraint",
+        "query": "Family-friendly adventure movies from the last decade",
+        "expected_movies": [
+            "Paddington 2",
+            "Kubo and the Two Strings",
+            "The Wild Robot"
+        ],
+        "must_not_retrieve": [
+            "Deadpool"
+        ]
+    },
+    {
+        "id": "ret_041",
+        "category": "natural_language",
+        "query": "I want a movie that will leave me staring at the ceiling afterward.",
+        "expected_movies": [
+            "Arrival",
+            "Incendies",
+            "The Truman Show",
+            "Coherence"
+        ],
+        "must_not_retrieve": [
+            "Rush Hour"
+        ]
+    },
+    {
+        "id": "ret_042",
+        "category": "natural_language",
+        "query": "Recommend something that feels lonely and beautiful.",
+        "expected_movies": [
+            "Her",
+            "Lost in Translation",
+            "Moon"
+        ],
+        "must_not_retrieve": [
+            "Fast Five"
+        ]
+    },
+    {
+        "id": "ret_043",
+        "category": "natural_language",
+        "query": "I want a movie that will completely mess with my head.",
+        "expected_movies": [
+            "Mulholland Drive",
+            "Primer",
+            "Coherence",
+            "Shutter Island"
+        ],
+        "must_not_retrieve": [
+            "Finding Nemo"
+        ]
+    },
+    {
+        "id": "ret_044",
+        "category": "natural_language",
+        "query": "Recommend something tense but not terrifying.",
+        "expected_movies": [
+            "Prisoners",
+            "Zodiac",
+            "Sicario"
+        ],
+        "must_not_retrieve": [
+            "The Conjuring"
+        ]
+    },
+    {
+        "id": "ret_045",
+        "category": "natural_language",
+        "query": "I want a movie that feels like a rainy night.",
+        "expected_movies": [
+            "Blade Runner 2049",
+            "Se7en",
+            "Lost in Translation"
+        ],
+        "must_not_retrieve": [
+            "Minions"
+        ]
+    },
+    {
+        "id": "ret_046",
+        "category": "ambiguous",
+        "query": "Recommend something different.",
+        "expected_movies": [
+            "Any diverse, non-mainstream films"
+        ],
+        "must_not_retrieve": [
+            "Only blockbuster recommendations"
+        ]
+    },
+    {
+        "id": "ret_047",
+        "category": "ambiguous",
+        "query": "I don't know what I want to watch.",
+        "expected_movies": [
+            "Broadly appealing, high-quality films"
+        ],
+        "must_not_retrieve": []
+    },
+    {
+        "id": "ret_048",
+        "category": "ambiguous",
+        "query": "Surprise me.",
+        "expected_movies": [
+            "Unexpected but highly rated recommendations"
+        ],
+        "must_not_retrieve": [
+            "Only mainstream blockbusters"
+        ]
+    },
+    {
+        "id": "ret_049",
+        "category": "ambiguous",
+        "query": "Recommend a masterpiece.",
+        "expected_movies": [
+            "Widely acclaimed classics and modern masterpieces"
+        ],
+        "must_not_retrieve": []
+    },
+    {
+        "id": "ret_050",
+        "category": "ambiguous",
+        "query": "What's the best movie you've got?",
+        "expected_movies": [
+            "Critically acclaimed top-tier films"
+        ],
+        "must_not_retrieve": []
+    }
+]

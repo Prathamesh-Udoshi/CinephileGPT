@@ -1,0 +1,787 @@
+[
+    {
+        "id": "mem_001",
+        "difficulty": "easy",
+        "memory": {
+            "favorite_genre": "Sci-Fi"
+        },
+        "query": "Recommend a movie.",
+        "expected_behavior": [
+            "Use stored Sci-Fi preference"
+        ],
+        "avoid": [
+            "Ignoring preference"
+        ]
+    },
+    {
+        "id": "mem_002",
+        "difficulty": "easy",
+        "memory": {
+            "favorite_genre": "Thriller"
+        },
+        "query": "What should I watch tonight?",
+        "expected_behavior": [
+            "Recommend thriller-oriented content"
+        ],
+        "avoid": []
+    },
+    {
+        "id": "mem_003",
+        "difficulty": "easy",
+        "memory": {
+            "favorite_director": "Christopher Nolan"
+        },
+        "query": "Any suggestions?",
+        "expected_behavior": [
+            "Consider Nolan preference"
+        ],
+        "avoid": []
+    },
+    {
+        "id": "mem_004",
+        "difficulty": "easy",
+        "memory": {
+            "favorite_actor": "Jake Gyllenhaal"
+        },
+        "query": "Recommend a movie.",
+        "expected_behavior": [
+            "Use actor preference when relevant"
+        ],
+        "avoid": []
+    },
+    {
+        "id": "mem_005",
+        "difficulty": "easy",
+        "memory": {
+            "favorite_movie": "Interstellar"
+        },
+        "query": "What should I watch next?",
+        "expected_behavior": [
+            "Leverage Interstellar preference"
+        ],
+        "avoid": []
+    },
+    {
+        "id": "mem_006",
+        "difficulty": "medium",
+        "memory": {
+            "disliked_genres": [
+                "Horror"
+            ]
+        },
+        "query": "Recommend a movie.",
+        "expected_behavior": [
+            "Avoid horror recommendations"
+        ],
+        "avoid": [
+            "Horror"
+        ]
+    },
+    {
+        "id": "mem_007",
+        "difficulty": "medium",
+        "memory": {
+            "favorite_genres": [
+                "Mystery",
+                "Crime"
+            ]
+        },
+        "query": "What should I watch?",
+        "expected_behavior": [
+            "Use both stored preferences"
+        ],
+        "avoid": []
+    },
+    {
+        "id": "mem_008",
+        "difficulty": "medium",
+        "memory": {
+            "favorite_languages": [
+                "Korean"
+            ]
+        },
+        "query": "Suggest a movie.",
+        "expected_behavior": [
+            "Prioritize Korean cinema"
+        ],
+        "avoid": []
+    },
+    {
+        "id": "mem_009",
+        "difficulty": "medium",
+        "memory": {
+            "favorite_runtime": "Under 120 minutes"
+        },
+        "query": "Recommend something.",
+        "expected_behavior": [
+            "Respect runtime preference"
+        ],
+        "avoid": [
+            "Very long films"
+        ]
+    },
+    {
+        "id": "mem_010",
+        "difficulty": "medium",
+        "memory": {
+            "favorite_decade": "1990s"
+        },
+        "query": "Any movie suggestions?",
+        "expected_behavior": [
+            "Prefer films from the 1990s"
+        ],
+        "avoid": []
+    },
+    {
+        "id": "mem_011",
+        "difficulty": "hard",
+        "memory": {
+            "watched_movies": [
+                "Interstellar",
+                "Arrival",
+                "Contact"
+            ]
+        },
+        "query": "Recommend a sci-fi movie.",
+        "expected_behavior": [
+            "Avoid watched movies",
+            "Recommend unseen alternatives"
+        ],
+        "avoid": [
+            "Interstellar",
+            "Arrival",
+            "Contact"
+        ]
+    },
+    {
+        "id": "mem_012",
+        "difficulty": "hard",
+        "memory": {
+            "watched_movies": [
+                "Prisoners",
+                "Zodiac",
+                "Se7en"
+            ]
+        },
+        "query": "Recommend another thriller.",
+        "expected_behavior": [
+            "Avoid already watched titles"
+        ],
+        "avoid": [
+            "Prisoners",
+            "Zodiac",
+            "Se7en"
+        ]
+    },
+    {
+        "id": "mem_013",
+        "difficulty": "hard",
+        "memory": {
+            "liked_movies": [
+                "Blade Runner 2049",
+                "Arrival",
+                "Ex Machina"
+            ]
+        },
+        "query": "What should I watch next?",
+        "expected_behavior": [
+            "Infer preference for cerebral sci-fi"
+        ],
+        "avoid": []
+    },
+    {
+        "id": "mem_014",
+        "difficulty": "hard",
+        "memory": {
+            "liked_movies": [
+                "Whiplash",
+                "Black Swan"
+            ]
+        },
+        "query": "Recommend something similar.",
+        "expected_behavior": [
+            "Infer psychological intensity"
+        ],
+        "avoid": []
+    },
+    {
+        "id": "mem_015",
+        "difficulty": "hard",
+        "memory": {
+            "liked_movies": [
+                "Her",
+                "Lost in Translation"
+            ]
+        },
+        "query": "Suggest a movie.",
+        "expected_behavior": [
+            "Infer introspective emotional taste"
+        ],
+        "avoid": []
+    },
+    {
+        "id": "mem_016",
+        "difficulty": "hard",
+        "memory": {
+            "favorite_genres": [
+                "Drama"
+            ],
+            "disliked_themes": [
+                "Tragic endings"
+            ]
+        },
+        "query": "Recommend a drama.",
+        "expected_behavior": [
+            "Respect both preferences"
+        ],
+        "avoid": [
+            "Known tragic endings"
+        ]
+    },
+    {
+        "id": "mem_017",
+        "difficulty": "hard",
+        "memory": {
+            "favorite_genres": [
+                "Sci-Fi"
+            ],
+            "disliked_genres": [
+                "Horror"
+            ]
+        },
+        "query": "Recommend a movie.",
+        "expected_behavior": [
+            "Balance preferences and dislikes"
+        ],
+        "avoid": [
+            "Horror"
+        ]
+    },
+    {
+        "id": "mem_018",
+        "difficulty": "hard",
+        "memory": {
+            "favorite_director": "David Fincher"
+        },
+        "query": "Recommend something new.",
+        "expected_behavior": [
+            "Use director preference",
+            "Avoid repetition"
+        ],
+        "avoid": []
+    },
+    {
+        "id": "mem_019",
+        "difficulty": "hard",
+        "memory": {
+            "favorite_moods": [
+                "Thought-provoking"
+            ]
+        },
+        "query": "Any recommendations?",
+        "expected_behavior": [
+            "Use mood preference"
+        ],
+        "avoid": []
+    },
+    {
+        "id": "mem_020",
+        "difficulty": "hard",
+        "memory": {
+            "favorite_genres": [
+                "Crime"
+            ],
+            "favorite_languages": [
+                "Korean"
+            ]
+        },
+        "query": "Recommend a movie.",
+        "expected_behavior": [
+            "Combine both memory signals"
+        ],
+        "avoid": []
+    },
+    {
+        "id": "mem_021",
+        "difficulty": "expert",
+        "conversation_history": [
+            "User: I hate horror movies.",
+            "Assistant: Noted."
+        ],
+        "query": "Recommend a movie.",
+        "expected_behavior": [
+            "Remember dislike",
+            "Avoid horror"
+        ],
+        "avoid": [
+            "Horror"
+        ]
+    },
+    {
+        "id": "mem_022",
+        "difficulty": "expert",
+        "conversation_history": [
+            "User: My favorite movie is Interstellar."
+        ],
+        "query": "What should I watch next?",
+        "expected_behavior": [
+            "Use earlier preference"
+        ],
+        "avoid": []
+    },
+    {
+        "id": "mem_023",
+        "difficulty": "expert",
+        "conversation_history": [
+            "User: I prefer slow-burn thrillers."
+        ],
+        "query": "Recommend something.",
+        "expected_behavior": [
+            "Remember pacing preference"
+        ],
+        "avoid": [
+            "Fast-paced action thrillers"
+        ]
+    },
+    {
+        "id": "mem_024",
+        "difficulty": "expert",
+        "conversation_history": [
+            "User: I don't like jump scares."
+        ],
+        "query": "Suggest a horror movie.",
+        "expected_behavior": [
+            "Recommend atmospheric horror",
+            "Avoid jump-scare-heavy films"
+        ],
+        "avoid": [
+            "Jump-scare-focused movies"
+        ]
+    },
+    {
+        "id": "mem_025",
+        "difficulty": "expert",
+        "conversation_history": [
+            "User: I've already watched Zodiac."
+        ],
+        "query": "Recommend a crime thriller.",
+        "expected_behavior": [
+            "Avoid recommending Zodiac again"
+        ],
+        "avoid": [
+            "Zodiac"
+        ]
+    },
+    {
+        "id": "mem_026",
+        "difficulty": "expert",
+        "memory": {
+            "favorite_genre": "Horror"
+        },
+        "conversation_history": [
+            "User: I've stopped enjoying horror movies lately."
+        ],
+        "query": "Recommend a movie.",
+        "expected_behavior": [
+            "Use the most recent preference",
+            "Avoid horror recommendations"
+        ],
+        "avoid": [
+            "Horror"
+        ]
+    },
+    {
+        "id": "mem_027",
+        "difficulty": "expert",
+        "memory": {
+            "favorite_director": "Christopher Nolan"
+        },
+        "conversation_history": [
+            "User: I've watched every Nolan movie already."
+        ],
+        "query": "Recommend something.",
+        "expected_behavior": [
+            "Avoid Nolan filmography",
+            "Recommend similar directors or films"
+        ],
+        "avoid": [
+            "Nolan movies already watched"
+        ]
+    },
+    {
+        "id": "mem_028",
+        "difficulty": "expert",
+        "memory": {
+            "favorite_genres": [
+                "Sci-Fi"
+            ]
+        },
+        "conversation_history": [
+            "User: I'm in the mood for a thriller tonight."
+        ],
+        "query": "What should I watch?",
+        "expected_behavior": [
+            "Prioritize current request over historical preference"
+        ],
+        "avoid": [
+            "Ignoring current intent"
+        ]
+    },
+    {
+        "id": "mem_029",
+        "difficulty": "expert",
+        "memory": {
+            "favorite_actor": "Leonardo DiCaprio"
+        },
+        "conversation_history": [
+            "User: Recommend someone different from DiCaprio."
+        ],
+        "query": "Any suggestions?",
+        "expected_behavior": [
+            "Diversify recommendations"
+        ],
+        "avoid": [
+            "Only DiCaprio movies"
+        ]
+    },
+    {
+        "id": "mem_030",
+        "difficulty": "expert",
+        "memory": {
+            "favorite_genres": [
+                "Crime",
+                "Mystery"
+            ]
+        },
+        "conversation_history": [
+            "User: I'm tired of crime movies."
+        ],
+        "query": "Recommend something.",
+        "expected_behavior": [
+            "Adapt to current preference shift"
+        ],
+        "avoid": [
+            "Crime movies"
+        ]
+    },
+    {
+        "id": "mem_031",
+        "difficulty": "expert",
+        "conversation_history": [
+            "User: I loved Interstellar.",
+            "User: I loved Arrival.",
+            "User: I loved Contact."
+        ],
+        "query": "What kind of movies do I seem to like?",
+        "expected_behavior": [
+            "Infer user preferences",
+            "Summarize accurately"
+        ],
+        "avoid": [
+            "Generic answers"
+        ]
+    },
+    {
+        "id": "mem_032",
+        "difficulty": "expert",
+        "conversation_history": [
+            "User: I dislike horror.",
+            "User: I dislike gore."
+        ],
+        "query": "Recommend something suspenseful.",
+        "expected_behavior": [
+            "Recommend suspense",
+            "Avoid horror and gore"
+        ],
+        "avoid": [
+            "Horror",
+            "Gore"
+        ]
+    },
+    {
+        "id": "mem_033",
+        "difficulty": "expert",
+        "conversation_history": [
+            "User: I enjoy Korean thrillers.",
+            "User: I enjoy slow-burn mysteries."
+        ],
+        "query": "Recommend a movie.",
+        "expected_behavior": [
+            "Combine both preferences"
+        ],
+        "avoid": []
+    },
+    {
+        "id": "mem_034",
+        "difficulty": "expert",
+        "conversation_history": [
+            "User: My favorite movie is Blade Runner 2049.",
+            "User: I care most about visuals."
+        ],
+        "query": "What should I watch?",
+        "expected_behavior": [
+            "Use both memory signals"
+        ],
+        "avoid": []
+    },
+    {
+        "id": "mem_035",
+        "difficulty": "expert",
+        "conversation_history": [
+            "User: I like emotional movies.",
+            "User: I don't want to cry tonight."
+        ],
+        "query": "Recommend something.",
+        "expected_behavior": [
+            "Balance emotional depth",
+            "Avoid devastating films"
+        ],
+        "avoid": [
+            "Extremely sad films"
+        ]
+    },
+    {
+        "id": "mem_036",
+        "difficulty": "expert",
+        "conversation_history": [
+            "User: Recommend a thriller.",
+            "Assistant: Zodiac",
+            "Assistant: Prisoners",
+            "Assistant: Memories of Murder"
+        ],
+        "query": "Recommend another thriller.",
+        "expected_behavior": [
+            "Avoid repeating prior recommendations"
+        ],
+        "avoid": [
+            "Zodiac",
+            "Prisoners",
+            "Memories of Murder"
+        ]
+    },
+    {
+        "id": "mem_037",
+        "difficulty": "expert",
+        "conversation_history": [
+            "Assistant recommended 10 movies previously"
+        ],
+        "query": "Give me something completely different.",
+        "expected_behavior": [
+            "Diversify recommendations"
+        ],
+        "avoid": [
+            "Repeated suggestions"
+        ]
+    },
+    {
+        "id": "mem_038",
+        "difficulty": "expert",
+        "memory": {
+            "watched_movies": [
+                "Interstellar",
+                "Arrival",
+                "Blade Runner 2049",
+                "Ex Machina",
+                "Moon"
+            ]
+        },
+        "query": "Recommend sci-fi.",
+        "expected_behavior": [
+            "Avoid watched titles",
+            "Find relevant alternatives"
+        ],
+        "avoid": [
+            "Interstellar",
+            "Arrival",
+            "Blade Runner 2049",
+            "Ex Machina",
+            "Moon"
+        ]
+    },
+    {
+        "id": "mem_039",
+        "difficulty": "expert",
+        "memory": {
+            "favorite_runtime": "Short"
+        },
+        "conversation_history": [
+            "User: I only have 90 minutes."
+        ],
+        "query": "Recommend something.",
+        "expected_behavior": [
+            "Respect runtime constraints"
+        ],
+        "avoid": [
+            "Long films"
+        ]
+    },
+    {
+        "id": "mem_040",
+        "difficulty": "expert",
+        "memory": {
+            "favorite_language": "Japanese"
+        },
+        "conversation_history": [
+            "User: I'm okay with any language tonight."
+        ],
+        "query": "Recommend a movie.",
+        "expected_behavior": [
+            "Allow broader recommendations",
+            "Not overfit to memory"
+        ],
+        "avoid": []
+    },
+    {
+        "id": "mem_041",
+        "difficulty": "expert",
+        "conversation_history": [
+            "User: I don't like musicals."
+        ],
+        "query": "Recommend a family movie.",
+        "expected_behavior": [
+            "Avoid musicals",
+            "Still satisfy family-friendly request"
+        ],
+        "avoid": [
+            "Musicals"
+        ]
+    },
+    {
+        "id": "mem_042",
+        "difficulty": "expert",
+        "conversation_history": [
+            "User: I love mystery movies.",
+            "User: I hate supernatural explanations."
+        ],
+        "query": "Recommend something.",
+        "expected_behavior": [
+            "Respect both preferences"
+        ],
+        "avoid": [
+            "Supernatural mysteries"
+        ]
+    },
+    {
+        "id": "mem_043",
+        "difficulty": "expert",
+        "conversation_history": [
+            "User: I usually watch thrillers.",
+            "User: I want something uplifting tonight."
+        ],
+        "query": "Recommend a movie.",
+        "expected_behavior": [
+            "Adapt to temporary mood"
+        ],
+        "avoid": [
+            "Dark thrillers"
+        ]
+    },
+    {
+        "id": "mem_044",
+        "difficulty": "expert",
+        "conversation_history": [
+            "User: My favorite actor is Jake Gyllenhaal.",
+            "User: I've watched all his movies."
+        ],
+        "query": "Recommend something.",
+        "expected_behavior": [
+            "Find similar actors or films"
+        ],
+        "avoid": [
+            "Previously watched Jake Gyllenhaal movies"
+        ]
+    },
+    {
+        "id": "mem_045",
+        "difficulty": "expert",
+        "conversation_history": [
+            "User: I loved Parasite.",
+            "User: I loved Memories of Murder."
+        ],
+        "query": "What does that say about my taste?",
+        "expected_behavior": [
+            "Infer user preferences accurately"
+        ],
+        "avoid": [
+            "Generic observations"
+        ]
+    },
+    {
+        "id": "mem_046",
+        "difficulty": "expert",
+        "memory": {
+            "favorite_genres": [
+                "Comedy"
+            ]
+        },
+        "conversation_history": [
+            "User: I need something serious tonight."
+        ],
+        "query": "Recommend a movie.",
+        "expected_behavior": [
+            "Prioritize current request"
+        ],
+        "avoid": [
+            "Comedies"
+        ]
+    },
+    {
+        "id": "mem_047",
+        "difficulty": "expert",
+        "conversation_history": [
+            "User: I dislike movies longer than 3 hours."
+        ],
+        "query": "Recommend an epic film.",
+        "expected_behavior": [
+            "Balance epic scope with runtime preference"
+        ],
+        "avoid": [
+            "Extremely long runtimes"
+        ]
+    },
+    {
+        "id": "mem_048",
+        "difficulty": "expert",
+        "conversation_history": [
+            "User: I want hidden gems.",
+            "Assistant recommended 5 hidden gems already."
+        ],
+        "query": "Give me more.",
+        "expected_behavior": [
+            "Provide fresh discoveries"
+        ],
+        "avoid": [
+            "Repeated titles"
+        ]
+    },
+    {
+        "id": "mem_049",
+        "difficulty": "expert",
+        "conversation_history": [
+            "User: I enjoy emotional dramas.",
+            "User: I enjoy thought-provoking sci-fi."
+        ],
+        "query": "Recommend a movie.",
+        "expected_behavior": [
+            "Combine multiple taste signals"
+        ],
+        "avoid": []
+    },
+    {
+        "id": "mem_050",
+        "difficulty": "expert",
+        "conversation_history": [
+            "User: My favorite movie was Interstellar.",
+            "User: Later, Dune became my favorite.",
+            "User: Recently, Arrival became my favorite."
+        ],
+        "query": "Recommend something.",
+        "expected_behavior": [
+            "Use the latest preference",
+            "Understand evolving taste"
+        ],
+        "avoid": [
+            "Ignoring updated preferences"
+        ]
+    }
+]

@@ -1,0 +1,1332 @@
+[
+    {
+        "id": "rec_001",
+        "category": "genre_based",
+        "query": "Recommend a good psychological thriller.",
+        "user_profile": {},
+        "expected_behavior": [
+            "Recommend psychological thrillers",
+            "Explain reasoning"
+        ],
+        "avoid": [
+            "Comedy",
+            "Family"
+        ]
+    },
+    {
+        "id": "rec_002",
+        "category": "genre_based",
+        "query": "Suggest some crime thrillers.",
+        "user_profile": {},
+        "expected_behavior": [
+            "Recommend crime thrillers",
+            "Include a mix of popular and lesser-known titles"
+        ],
+        "avoid": [
+            "Romance"
+        ]
+    },
+    {
+        "id": "rec_003",
+        "category": "genre_based",
+        "query": "I want a mind-bending sci-fi movie.",
+        "user_profile": {},
+        "expected_behavior": [
+            "Recommend cerebral sci-fi",
+            "Focus on thought-provoking stories"
+        ],
+        "avoid": [
+            "Pure action films"
+        ]
+    },
+    {
+        "id": "rec_004",
+        "category": "genre_based",
+        "query": "Recommend a dark mystery movie.",
+        "user_profile": {},
+        "expected_behavior": [
+            "Recommend mystery-focused films",
+            "Maintain dark tone"
+        ],
+        "avoid": [
+            "Light-hearted content"
+        ]
+    },
+    {
+        "id": "rec_005",
+        "category": "genre_based",
+        "query": "Suggest some survival movies.",
+        "user_profile": {},
+        "expected_behavior": [
+            "Recommend survival-focused stories"
+        ],
+        "avoid": [
+            "Superhero films"
+        ]
+    },
+    {
+        "id": "rec_006",
+        "category": "genre_based",
+        "query": "Recommend military war movies.",
+        "user_profile": {},
+        "expected_behavior": [
+            "Recommend war-related films"
+        ],
+        "avoid": [
+            "Fantasy"
+        ]
+    },
+    {
+        "id": "rec_007",
+        "category": "genre_based",
+        "query": "Suggest courtroom dramas.",
+        "user_profile": {},
+        "expected_behavior": [
+            "Recommend courtroom/legal dramas"
+        ],
+        "avoid": [
+            "Action-only movies"
+        ]
+    },
+    {
+        "id": "rec_008",
+        "category": "genre_based",
+        "query": "Recommend some space exploration movies.",
+        "user_profile": {},
+        "expected_behavior": [
+            "Recommend space-focused films"
+        ],
+        "avoid": [
+            "Earth-bound dramas"
+        ]
+    },
+    {
+        "id": "rec_009",
+        "category": "genre_based",
+        "query": "Suggest great horror movies.",
+        "user_profile": {},
+        "expected_behavior": [
+            "Recommend horror films",
+            "Include different horror subgenres"
+        ],
+        "avoid": []
+    },
+    {
+        "id": "rec_010",
+        "category": "genre_based",
+        "query": "Recommend detective movies.",
+        "user_profile": {},
+        "expected_behavior": [
+            "Recommend detective/investigation films"
+        ],
+        "avoid": []
+    },
+    {
+        "id": "rec_011",
+        "category": "mood_based",
+        "query": "I want something uplifting.",
+        "user_profile": {},
+        "expected_behavior": [
+            "Recommend positive and inspiring movies"
+        ],
+        "avoid": [
+            "Depressing endings"
+        ]
+    },
+    {
+        "id": "rec_012",
+        "category": "mood_based",
+        "query": "I'm feeling lonely tonight. Recommend a movie.",
+        "user_profile": {},
+        "expected_behavior": [
+            "Match emotional state",
+            "Show empathy"
+        ],
+        "avoid": [
+            "Extremely dark recommendations"
+        ]
+    },
+    {
+        "id": "rec_013",
+        "category": "mood_based",
+        "query": "I want a movie that will make me think.",
+        "user_profile": {},
+        "expected_behavior": [
+            "Recommend intellectually stimulating films"
+        ],
+        "avoid": [
+            "Mindless action"
+        ]
+    },
+    {
+        "id": "rec_014",
+        "category": "mood_based",
+        "query": "I want to cry.",
+        "user_profile": {},
+        "expected_behavior": [
+            "Recommend emotional films"
+        ],
+        "avoid": [
+            "Comedies"
+        ]
+    },
+    {
+        "id": "rec_015",
+        "category": "mood_based",
+        "query": "Recommend something relaxing after a stressful day.",
+        "user_profile": {},
+        "expected_behavior": [
+            "Recommend calming content"
+        ],
+        "avoid": [
+            "High-stress thrillers"
+        ]
+    },
+    {
+        "id": "rec_016",
+        "category": "similar_movie",
+        "query": "I loved Interstellar. What should I watch next?",
+        "user_profile": {},
+        "expected_behavior": [
+            "Understand why Interstellar is liked",
+            "Recommend similar films"
+        ],
+        "avoid": [
+            "Unrelated genres"
+        ]
+    },
+    {
+        "id": "rec_017",
+        "category": "similar_movie",
+        "query": "Suggest movies like Prisoners.",
+        "user_profile": {},
+        "expected_behavior": [
+            "Recommend dark investigative thrillers"
+        ],
+        "avoid": [
+            "Romantic films"
+        ]
+    },
+    {
+        "id": "rec_018",
+        "category": "similar_movie",
+        "query": "Recommend movies similar to Zodiac.",
+        "user_profile": {},
+        "expected_behavior": [
+            "Recommend procedural crime mysteries"
+        ],
+        "avoid": []
+    },
+    {
+        "id": "rec_019",
+        "category": "similar_movie",
+        "query": "I liked Arrival. What's next?",
+        "user_profile": {},
+        "expected_behavior": [
+            "Recommend thoughtful sci-fi"
+        ],
+        "avoid": [
+            "Explosive action-only sci-fi"
+        ]
+    },
+    {
+        "id": "rec_020",
+        "category": "similar_movie",
+        "query": "Suggest movies like Blade Runner 2049.",
+        "user_profile": {},
+        "expected_behavior": [
+            "Recommend atmospheric sci-fi"
+        ],
+        "avoid": []
+    },
+    {
+        "id": "rec_021",
+        "category": "director_based",
+        "query": "Recommend Christopher Nolan movies.",
+        "user_profile": {},
+        "expected_behavior": [
+            "Recommend Nolan-directed films"
+        ],
+        "avoid": [
+            "Other directors unless comparison helps"
+        ]
+    },
+    {
+        "id": "rec_022",
+        "category": "director_based",
+        "query": "I like David Fincher films.",
+        "user_profile": {},
+        "expected_behavior": [
+            "Recommend Fincher films and similar styles"
+        ],
+        "avoid": []
+    },
+    {
+        "id": "rec_023",
+        "category": "actor_based",
+        "query": "Recommend movies starring Jake Gyllenhaal.",
+        "user_profile": {},
+        "expected_behavior": [
+            "Recommend movies featuring the actor"
+        ],
+        "avoid": []
+    },
+    {
+        "id": "rec_024",
+        "category": "actor_based",
+        "query": "Suggest Leonardo DiCaprio movies.",
+        "user_profile": {},
+        "expected_behavior": [
+            "Recommend relevant filmography"
+        ],
+        "avoid": []
+    },
+    {
+        "id": "rec_025",
+        "category": "hidden_gem",
+        "query": "Recommend an underrated movie most people haven't seen.",
+        "user_profile": {},
+        "expected_behavior": [
+            "Recommend lesser-known high-quality films"
+        ],
+        "avoid": [
+            "Only mainstream blockbusters"
+        ]
+    },
+    {
+        "id": "rec_026",
+        "category": "taste_profile",
+        "query": "I love dark psychological movies and slow-burn storytelling.",
+        "user_profile": {},
+        "expected_behavior": [
+            "Recommend dark psychological films",
+            "Favor slow-burn narratives",
+            "Explain atmosphere and tension"
+        ],
+        "avoid": [
+            "Fast-paced action movies"
+        ]
+    },
+    {
+        "id": "rec_027",
+        "category": "taste_profile",
+        "query": "I enjoy movies with morally grey characters.",
+        "user_profile": {},
+        "expected_behavior": [
+            "Recommend films with complex protagonists",
+            "Highlight character depth"
+        ],
+        "avoid": [
+            "Simple good-vs-evil stories"
+        ]
+    },
+    {
+        "id": "rec_028",
+        "category": "taste_profile",
+        "query": "I like movies that leave me thinking for days.",
+        "user_profile": {},
+        "expected_behavior": [
+            "Recommend thought-provoking films",
+            "Focus on philosophical themes"
+        ],
+        "avoid": [
+            "Pure popcorn entertainment"
+        ]
+    },
+    {
+        "id": "rec_029",
+        "category": "taste_profile",
+        "query": "I prefer realistic crime dramas over flashy action.",
+        "user_profile": {},
+        "expected_behavior": [
+            "Recommend grounded crime dramas",
+            "Avoid excessive spectacle"
+        ],
+        "avoid": [
+            "Over-the-top action films"
+        ]
+    },
+    {
+        "id": "rec_030",
+        "category": "taste_profile",
+        "query": "I enjoy movies with unreliable narrators.",
+        "user_profile": {},
+        "expected_behavior": [
+            "Recommend films featuring unreliable narration"
+        ],
+        "avoid": []
+    },
+    {
+        "id": "rec_031",
+        "category": "taste_profile",
+        "query": "I love emotionally devastating movies.",
+        "user_profile": {},
+        "expected_behavior": [
+            "Recommend emotionally impactful films"
+        ],
+        "avoid": [
+            "Light comedies"
+        ]
+    },
+    {
+        "id": "rec_032",
+        "category": "taste_profile",
+        "query": "I enjoy movies with great cinematography.",
+        "user_profile": {},
+        "expected_behavior": [
+            "Recommend visually stunning films"
+        ],
+        "avoid": []
+    },
+    {
+        "id": "rec_033",
+        "category": "taste_profile",
+        "query": "I love mystery movies but hate supernatural explanations.",
+        "user_profile": {},
+        "expected_behavior": [
+            "Recommend grounded mysteries",
+            "Avoid supernatural resolutions"
+        ],
+        "avoid": [
+            "Ghost stories",
+            "Supernatural mysteries"
+        ]
+    },
+    {
+        "id": "rec_034",
+        "category": "taste_profile",
+        "query": "I like realistic survival stories.",
+        "user_profile": {},
+        "expected_behavior": [
+            "Recommend realistic survival films"
+        ],
+        "avoid": [
+            "Fantasy survival stories"
+        ]
+    },
+    {
+        "id": "rec_035",
+        "category": "taste_profile",
+        "query": "I enjoy intelligent science fiction.",
+        "user_profile": {},
+        "expected_behavior": [
+            "Recommend cerebral sci-fi"
+        ],
+        "avoid": [
+            "Generic action sci-fi"
+        ]
+    },
+    {
+        "id": "rec_036",
+        "category": "multi_constraint",
+        "query": "Recommend a thriller under 2 hours with no sequels.",
+        "user_profile": {},
+        "expected_behavior": [
+            "Respect runtime constraint",
+            "Respect sequel restriction"
+        ],
+        "avoid": [
+            "Sequels",
+            "Long films"
+        ]
+    },
+    {
+        "id": "rec_037",
+        "category": "multi_constraint",
+        "query": "Recommend a sci-fi movie from after 2015 with strong emotional themes.",
+        "user_profile": {},
+        "expected_behavior": [
+            "Respect release-year constraint",
+            "Include emotional storytelling"
+        ],
+        "avoid": [
+            "Pre-2015 films"
+        ]
+    },
+    {
+        "id": "rec_038",
+        "category": "multi_constraint",
+        "query": "Recommend a crime movie that isn't too violent.",
+        "user_profile": {},
+        "expected_behavior": [
+            "Recommend crime films",
+            "Avoid excessive violence"
+        ],
+        "avoid": [
+            "Graphic violence"
+        ]
+    },
+    {
+        "id": "rec_039",
+        "category": "multi_constraint",
+        "query": "Suggest a family-friendly adventure movie from the last decade.",
+        "user_profile": {},
+        "expected_behavior": [
+            "Family-friendly",
+            "Adventure genre",
+            "Recent release"
+        ],
+        "avoid": [
+            "Adult content"
+        ]
+    },
+    {
+        "id": "rec_040",
+        "category": "multi_constraint",
+        "query": "Recommend a horror movie with almost no jump scares.",
+        "user_profile": {},
+        "expected_behavior": [
+            "Recommend atmospheric horror",
+            "Avoid jump-scare heavy films"
+        ],
+        "avoid": [
+            "Jump-scare focused horror"
+        ]
+    },
+    {
+        "id": "rec_041",
+        "category": "multi_constraint",
+        "query": "Recommend an underrated thriller from a non-English language.",
+        "user_profile": {},
+        "expected_behavior": [
+            "Recommend international cinema",
+            "Avoid mainstream English films"
+        ],
+        "avoid": [
+            "Hollywood-only recommendations"
+        ]
+    },
+    {
+        "id": "rec_042",
+        "category": "multi_constraint",
+        "query": "Suggest a movie for a date night that is neither romance nor comedy.",
+        "user_profile": {},
+        "expected_behavior": [
+            "Find suitable alternatives",
+            "Respect genre exclusions"
+        ],
+        "avoid": [
+            "Romance",
+            "Comedy"
+        ]
+    },
+    {
+        "id": "rec_043",
+        "category": "multi_constraint",
+        "query": "Recommend movies similar to Interstellar but without space travel.",
+        "user_profile": {},
+        "expected_behavior": [
+            "Understand underlying themes",
+            "Recommend based on emotional and philosophical similarity"
+        ],
+        "avoid": [
+            "Space-focused films"
+        ]
+    },
+    {
+        "id": "rec_044",
+        "category": "multi_constraint",
+        "query": "Suggest mystery films with female leads and strong reviews.",
+        "user_profile": {},
+        "expected_behavior": [
+            "Respect lead-character preference",
+            "Recommend quality films"
+        ],
+        "avoid": []
+    },
+    {
+        "id": "rec_045",
+        "category": "multi_constraint",
+        "query": "Recommend movies that are suspenseful but not scary.",
+        "user_profile": {},
+        "expected_behavior": [
+            "Recommend suspense",
+            "Avoid horror elements"
+        ],
+        "avoid": [
+            "Horror"
+        ]
+    },
+    {
+        "id": "rec_046",
+        "category": "edge_case",
+        "query": "Recommend something completely different from my usual taste.",
+        "user_profile": {
+            "favorite_genres": [
+                "Thriller",
+                "Crime"
+            ]
+        },
+        "expected_behavior": [
+            "Intentionally diversify recommendations"
+        ],
+        "avoid": [
+            "Only thrillers and crime films"
+        ]
+    },
+    {
+        "id": "rec_047",
+        "category": "edge_case",
+        "query": "I've already watched every Christopher Nolan movie. What next?",
+        "user_profile": {},
+        "expected_behavior": [
+            "Recommend similar directors or films",
+            "Avoid Nolan filmography repetition"
+        ],
+        "avoid": [
+            "Only Nolan recommendations"
+        ]
+    },
+    {
+        "id": "rec_048",
+        "category": "edge_case",
+        "query": "Recommend a movie, but don't tell me anything about the plot.",
+        "user_profile": {},
+        "expected_behavior": [
+            "Recommend films",
+            "Avoid plot spoilers"
+        ],
+        "avoid": [
+            "Plot summaries"
+        ]
+    },
+    {
+        "id": "rec_049",
+        "category": "edge_case",
+        "query": "I want the most unpredictable movie you've got.",
+        "user_profile": {},
+        "expected_behavior": [
+            "Recommend highly unpredictable films",
+            "Explain unpredictability without spoilers"
+        ],
+        "avoid": [
+            "Major spoilers"
+        ]
+    },
+    {
+        "id": "rec_050",
+        "category": "edge_case",
+        "query": "Recommend a masterpiece that most casual viewers haven't heard of.",
+        "user_profile": {},
+        "expected_behavior": [
+            "Recommend lesser-known critically acclaimed films"
+        ],
+        "avoid": [
+            "Only mainstream blockbusters"
+        ]
+    },
+    {
+        "id": "rec_051",
+        "category": "memory_based",
+        "difficulty": "hard",
+        "query": "Recommend something for me.",
+        "user_profile": {
+            "favorite_genres": [
+                "Thriller",
+                "Crime"
+            ]
+        },
+        "expected_behavior": [
+            "Use stored preferences",
+            "Recommend thrillers or crime films"
+        ],
+        "avoid": [
+            "Random unrelated genres"
+        ]
+    },
+    {
+        "id": "rec_052",
+        "category": "memory_based",
+        "difficulty": "hard",
+        "query": "What should I watch tonight?",
+        "user_profile": {
+            "favorite_directors": [
+                "Christopher Nolan"
+            ]
+        },
+        "expected_behavior": [
+            "Consider Nolan preference",
+            "Recommend Nolan or Nolan-like films"
+        ],
+        "avoid": []
+    },
+    {
+        "id": "rec_053",
+        "category": "memory_based",
+        "difficulty": "hard",
+        "query": "Suggest a movie.",
+        "user_profile": {
+            "disliked_genres": [
+                "Horror"
+            ]
+        },
+        "expected_behavior": [
+            "Avoid horror recommendations"
+        ],
+        "avoid": [
+            "Horror"
+        ]
+    },
+    {
+        "id": "rec_054",
+        "category": "memory_based",
+        "difficulty": "hard",
+        "query": "Recommend something new.",
+        "user_profile": {
+            "watched_movies": [
+                "Interstellar",
+                "Arrival",
+                "Contact"
+            ]
+        },
+        "expected_behavior": [
+            "Avoid already watched titles",
+            "Recommend similar unseen films"
+        ],
+        "avoid": [
+            "Interstellar",
+            "Arrival",
+            "Contact"
+        ]
+    },
+    {
+        "id": "rec_055",
+        "category": "memory_based",
+        "difficulty": "hard",
+        "query": "Give me a movie recommendation.",
+        "user_profile": {
+            "favorite_genres": [
+                "Sci-Fi"
+            ],
+            "favorite_moods": [
+                "Thought-provoking"
+            ]
+        },
+        "expected_behavior": [
+            "Use both genre and mood preferences"
+        ],
+        "avoid": []
+    },
+    {
+        "id": "rec_056",
+        "category": "memory_based",
+        "difficulty": "hard",
+        "query": "What should I watch next?",
+        "user_profile": {
+            "liked_movies": [
+                "Prisoners",
+                "Zodiac",
+                "Memories of Murder"
+            ]
+        },
+        "expected_behavior": [
+            "Infer investigative crime preference",
+            "Recommend similar films"
+        ],
+        "avoid": []
+    },
+    {
+        "id": "rec_057",
+        "category": "memory_based",
+        "difficulty": "hard",
+        "query": "Recommend a movie.",
+        "user_profile": {
+            "favorite_actor": "Jake Gyllenhaal"
+        },
+        "expected_behavior": [
+            "Use actor preference when appropriate"
+        ],
+        "avoid": []
+    },
+    {
+        "id": "rec_058",
+        "category": "memory_based",
+        "difficulty": "hard",
+        "query": "Suggest something different.",
+        "user_profile": {
+            "favorite_genres": [
+                "Crime",
+                "Thriller"
+            ]
+        },
+        "expected_behavior": [
+            "Diversify recommendations",
+            "Still respect overall taste"
+        ],
+        "avoid": [
+            "Only crime recommendations"
+        ]
+    },
+    {
+        "id": "rec_059",
+        "category": "memory_based",
+        "difficulty": "hard",
+        "query": "Recommend a movie for tonight.",
+        "user_profile": {
+            "favorite_runtime": "Under 120 minutes"
+        },
+        "expected_behavior": [
+            "Respect runtime preference"
+        ],
+        "avoid": [
+            "Very long films"
+        ]
+    },
+    {
+        "id": "rec_060",
+        "category": "memory_based",
+        "difficulty": "hard",
+        "query": "Any suggestions?",
+        "user_profile": {
+            "favorite_genres": [
+                "Mystery"
+            ],
+            "disliked_genres": [
+                "Supernatural"
+            ]
+        },
+        "expected_behavior": [
+            "Recommend mystery films",
+            "Avoid supernatural themes"
+        ],
+        "avoid": [
+            "Supernatural mysteries"
+        ]
+    },
+    {
+        "id": "rec_061",
+        "category": "memory_based",
+        "difficulty": "expert",
+        "query": "Recommend something like the movies I usually enjoy.",
+        "user_profile": {
+            "liked_movies": [
+                "Blade Runner 2049",
+                "Arrival",
+                "Ex Machina"
+            ]
+        },
+        "expected_behavior": [
+            "Infer preference for cerebral sci-fi",
+            "Recommend accordingly"
+        ],
+        "avoid": []
+    },
+    {
+        "id": "rec_062",
+        "category": "memory_based",
+        "difficulty": "expert",
+        "query": "Recommend a movie.",
+        "user_profile": {
+            "liked_movies": [
+                "The Grand Budapest Hotel",
+                "Fantastic Mr. Fox"
+            ]
+        },
+        "expected_behavior": [
+            "Infer stylistic preference",
+            "Recommend visually distinctive films"
+        ],
+        "avoid": []
+    },
+    {
+        "id": "rec_063",
+        "category": "memory_based",
+        "difficulty": "expert",
+        "query": "Give me something interesting.",
+        "user_profile": {
+            "liked_movies": [
+                "Her",
+                "Lost in Translation"
+            ]
+        },
+        "expected_behavior": [
+            "Infer emotional and introspective taste"
+        ],
+        "avoid": []
+    },
+    {
+        "id": "rec_064",
+        "category": "memory_based",
+        "difficulty": "expert",
+        "query": "Recommend a movie I probably haven't seen.",
+        "user_profile": {
+            "watched_movies": [
+                "Interstellar",
+                "Inception",
+                "The Dark Knight",
+                "Arrival",
+                "Prisoners"
+            ]
+        },
+        "expected_behavior": [
+            "Avoid obvious mainstream picks",
+            "Suggest quality lesser-known alternatives"
+        ],
+        "avoid": [
+            "Interstellar",
+            "Inception",
+            "The Dark Knight",
+            "Arrival",
+            "Prisoners"
+        ]
+    },
+    {
+        "id": "rec_065",
+        "category": "memory_based",
+        "difficulty": "expert",
+        "query": "Recommend a movie.",
+        "user_profile": {
+            "liked_movies": [
+                "Whiplash",
+                "Black Swan"
+            ]
+        },
+        "expected_behavior": [
+            "Infer obsession, ambition, and psychological pressure themes"
+        ],
+        "avoid": []
+    },
+    {
+        "id": "rec_066",
+        "category": "memory_based",
+        "difficulty": "expert",
+        "query": "What should I watch?",
+        "user_profile": {
+            "favorite_genres": [
+                "Drama"
+            ],
+            "disliked_themes": [
+                "Tragic endings"
+            ]
+        },
+        "expected_behavior": [
+            "Recommend dramas",
+            "Avoid tragic conclusions"
+        ],
+        "avoid": [
+            "Known tragic endings"
+        ]
+    },
+    {
+        "id": "rec_067",
+        "category": "memory_based",
+        "difficulty": "expert",
+        "query": "Suggest a movie.",
+        "user_profile": {
+            "favorite_languages": [
+                "Korean"
+            ]
+        },
+        "expected_behavior": [
+            "Prioritize Korean cinema"
+        ],
+        "avoid": []
+    },
+    {
+        "id": "rec_068",
+        "category": "memory_based",
+        "difficulty": "expert",
+        "query": "Recommend something unusual.",
+        "user_profile": {
+            "favorite_genres": [
+                "Sci-Fi"
+            ],
+            "favorite_moods": [
+                "Philosophical"
+            ]
+        },
+        "expected_behavior": [
+            "Avoid generic sci-fi",
+            "Recommend unique philosophical works"
+        ],
+        "avoid": [
+            "Generic blockbuster sci-fi"
+        ]
+    },
+    {
+        "id": "rec_069",
+        "category": "memory_based",
+        "difficulty": "expert",
+        "query": "What should I watch next?",
+        "user_profile": {
+            "liked_movies": [
+                "Before Sunrise",
+                "Her"
+            ]
+        },
+        "expected_behavior": [
+            "Infer conversational and relationship-driven storytelling preference"
+        ],
+        "avoid": []
+    },
+    {
+        "id": "rec_070",
+        "category": "memory_based",
+        "difficulty": "expert",
+        "query": "Recommend a movie.",
+        "user_profile": {
+            "favorite_decades": [
+                "1990s"
+            ]
+        },
+        "expected_behavior": [
+            "Prioritize 1990s cinema"
+        ],
+        "avoid": []
+    },
+    {
+        "id": "rec_071",
+        "category": "conversation_context",
+        "difficulty": "expert",
+        "query": "Give me another one.",
+        "conversation_context": [
+            "Recommended Zodiac",
+            "Recommended Prisoners",
+            "Recommended Memories of Murder"
+        ],
+        "expected_behavior": [
+            "Understand previous recommendations",
+            "Avoid repeating titles"
+        ],
+        "avoid": [
+            "Zodiac",
+            "Prisoners",
+            "Memories of Murder"
+        ]
+    },
+    {
+        "id": "rec_072",
+        "category": "conversation_context",
+        "difficulty": "expert",
+        "query": "Something less dark than those.",
+        "conversation_context": [
+            "Previously recommended Se7en",
+            "Previously recommended Prisoners"
+        ],
+        "expected_behavior": [
+            "Understand comparative preference",
+            "Reduce darkness level"
+        ],
+        "avoid": []
+    },
+    {
+        "id": "rec_073",
+        "category": "conversation_context",
+        "difficulty": "expert",
+        "query": "Recommend another one but not as long.",
+        "conversation_context": [
+            "Previously recommended Interstellar"
+        ],
+        "expected_behavior": [
+            "Understand runtime comparison"
+        ],
+        "avoid": [
+            "Very long movies"
+        ]
+    },
+    {
+        "id": "rec_074",
+        "category": "conversation_context",
+        "difficulty": "expert",
+        "query": "Something from another country.",
+        "conversation_context": [
+            "Previously recommended Hollywood thrillers"
+        ],
+        "expected_behavior": [
+            "Diversify geographically"
+        ],
+        "avoid": [
+            "Only Hollywood films"
+        ]
+    },
+    {
+        "id": "rec_075",
+        "category": "conversation_context",
+        "difficulty": "expert",
+        "query": "I already watched all of those.",
+        "conversation_context": [
+            "Previously recommended 5 movies"
+        ],
+        "expected_behavior": [
+            "Generate fresh recommendations",
+            "Avoid previous suggestions"
+        ],
+        "avoid": [
+            "Previously recommended titles"
+        ]
+    },
+    {
+        "id": "rec_076",
+        "category": "reasoning_based",
+        "difficulty": "expert",
+        "query": "I loved Interstellar because of the emotional father-daughter relationship.",
+        "expected_behavior": [
+            "Understand emotional preference",
+            "Recommend emotionally resonant films",
+            "Avoid focusing only on space themes"
+        ],
+        "avoid": [
+            "Only space movies"
+        ]
+    },
+    {
+        "id": "rec_077",
+        "category": "reasoning_based",
+        "difficulty": "expert",
+        "query": "I liked Prisoners because of the tension and atmosphere.",
+        "expected_behavior": [
+            "Identify atmospheric suspense",
+            "Recommend similarly tense films"
+        ],
+        "avoid": [
+            "Fast action thrillers"
+        ]
+    },
+    {
+        "id": "rec_078",
+        "category": "reasoning_based",
+        "difficulty": "expert",
+        "query": "I enjoyed Blade Runner 2049 for its visuals and mood.",
+        "expected_behavior": [
+            "Focus on cinematography and atmosphere"
+        ],
+        "avoid": [
+            "Generic sci-fi action"
+        ]
+    },
+    {
+        "id": "rec_079",
+        "category": "reasoning_based",
+        "difficulty": "expert",
+        "query": "I loved Arrival because it made me think.",
+        "expected_behavior": [
+            "Recommend cerebral and philosophical films"
+        ],
+        "avoid": [
+            "Pure spectacle films"
+        ]
+    },
+    {
+        "id": "rec_080",
+        "category": "reasoning_based",
+        "difficulty": "expert",
+        "query": "I liked Whiplash because of its intensity.",
+        "expected_behavior": [
+            "Understand obsession and ambition themes"
+        ],
+        "avoid": []
+    },
+    {
+        "id": "rec_081",
+        "category": "reasoning_based",
+        "difficulty": "expert",
+        "query": "I loved Zodiac because it felt realistic.",
+        "expected_behavior": [
+            "Recommend grounded investigative films"
+        ],
+        "avoid": [
+            "Overly stylized thrillers"
+        ]
+    },
+    {
+        "id": "rec_082",
+        "category": "reasoning_based",
+        "difficulty": "expert",
+        "query": "I enjoyed Her because it felt intimate and personal.",
+        "expected_behavior": [
+            "Recommend emotionally intimate stories"
+        ],
+        "avoid": []
+    },
+    {
+        "id": "rec_083",
+        "category": "reasoning_based",
+        "difficulty": "expert",
+        "query": "I liked The Prestige because of the twists.",
+        "expected_behavior": [
+            "Recommend twist-heavy narratives"
+        ],
+        "avoid": [
+            "Predictable stories"
+        ]
+    },
+    {
+        "id": "rec_084",
+        "category": "reasoning_based",
+        "difficulty": "expert",
+        "query": "I loved Se7en because of the mystery, not the violence.",
+        "expected_behavior": [
+            "Focus on mystery elements",
+            "Reduce emphasis on graphic content"
+        ],
+        "avoid": [
+            "Excessively violent films"
+        ]
+    },
+    {
+        "id": "rec_085",
+        "category": "reasoning_based",
+        "difficulty": "expert",
+        "query": "I liked The Social Network because of the dialogue.",
+        "expected_behavior": [
+            "Recommend dialogue-driven films"
+        ],
+        "avoid": []
+    },
+    {
+        "id": "rec_086",
+        "category": "reasoning_based",
+        "difficulty": "expert",
+        "query": "I loved Mad Max: Fury Road because it never slowed down.",
+        "expected_behavior": [
+            "Recommend high-energy films"
+        ],
+        "avoid": [
+            "Slow-burn dramas"
+        ]
+    },
+    {
+        "id": "rec_087",
+        "category": "reasoning_based",
+        "difficulty": "expert",
+        "query": "I enjoyed Before Sunrise because of the conversations.",
+        "expected_behavior": [
+            "Recommend conversation-driven films"
+        ],
+        "avoid": [
+            "Action-heavy movies"
+        ]
+    },
+    {
+        "id": "rec_088",
+        "category": "reasoning_based",
+        "difficulty": "expert",
+        "query": "I liked The Thing because of the paranoia.",
+        "expected_behavior": [
+            "Identify paranoia and distrust themes"
+        ],
+        "avoid": []
+    },
+    {
+        "id": "rec_089",
+        "category": "reasoning_based",
+        "difficulty": "expert",
+        "query": "I loved The Grand Budapest Hotel because of its style.",
+        "expected_behavior": [
+            "Recommend stylistically distinctive films"
+        ],
+        "avoid": []
+    },
+    {
+        "id": "rec_090",
+        "category": "reasoning_based",
+        "difficulty": "expert",
+        "query": "I liked Ex Machina because of the AI themes.",
+        "expected_behavior": [
+            "Recommend intelligent AI-focused stories"
+        ],
+        "avoid": [
+            "Generic robot action films"
+        ]
+    },
+    {
+        "id": "rec_091",
+        "category": "reasoning_based",
+        "difficulty": "expert",
+        "query": "I enjoyed Gone Girl because of the manipulation and mind games.",
+        "expected_behavior": [
+            "Recommend psychological manipulation narratives"
+        ],
+        "avoid": []
+    },
+    {
+        "id": "rec_092",
+        "category": "reasoning_based",
+        "difficulty": "expert",
+        "query": "I loved Parasite because of its social commentary.",
+        "expected_behavior": [
+            "Recommend films with strong social themes"
+        ],
+        "avoid": []
+    },
+    {
+        "id": "rec_093",
+        "category": "reasoning_based",
+        "difficulty": "expert",
+        "query": "I liked The Dark Knight because of the Joker.",
+        "expected_behavior": [
+            "Recognize preference for compelling antagonists"
+        ],
+        "avoid": []
+    },
+    {
+        "id": "rec_094",
+        "category": "reasoning_based",
+        "difficulty": "expert",
+        "query": "I loved Moon because it felt lonely and reflective.",
+        "expected_behavior": [
+            "Recommend introspective science fiction"
+        ],
+        "avoid": []
+    },
+    {
+        "id": "rec_095",
+        "category": "reasoning_based",
+        "difficulty": "expert",
+        "query": "I enjoyed Shutter Island because I kept questioning reality.",
+        "expected_behavior": [
+            "Recommend reality-bending narratives"
+        ],
+        "avoid": []
+    },
+    {
+        "id": "rec_096",
+        "category": "reasoning_based",
+        "difficulty": "expert",
+        "query": "I liked Fight Club because it challenged my perspective.",
+        "expected_behavior": [
+            "Recommend provocative and unconventional films"
+        ],
+        "avoid": []
+    },
+    {
+        "id": "rec_097",
+        "category": "reasoning_based",
+        "difficulty": "expert",
+        "query": "I loved No Country for Old Men because of the tension.",
+        "expected_behavior": [
+            "Recommend suspenseful character-driven thrillers"
+        ],
+        "avoid": []
+    },
+    {
+        "id": "rec_098",
+        "category": "reasoning_based",
+        "difficulty": "expert",
+        "query": "I enjoyed Eternal Sunshine of the Spotless Mind because of its creativity.",
+        "expected_behavior": [
+            "Recommend imaginative and emotionally rich films"
+        ],
+        "avoid": []
+    },
+    {
+        "id": "rec_099",
+        "category": "reasoning_based",
+        "difficulty": "expert",
+        "query": "I liked Memento because I had to piece everything together.",
+        "expected_behavior": [
+            "Recommend puzzle-like narratives"
+        ],
+        "avoid": []
+    },
+    {
+        "id": "rec_100",
+        "category": "reasoning_based",
+        "difficulty": "expert",
+        "query": "I loved The Truman Show because it made me question reality.",
+        "expected_behavior": [
+            "Recommend philosophical and reality-questioning films"
+        ],
+        "avoid": []
+    }
+]
