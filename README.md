@@ -78,6 +78,16 @@ CinephileGPT/
 │   │       ├── intent.py         # Zero-shot intent classification
 │   │       ├── retrieval.py      # Hybrid RAG & Qdrant query filters
 │   │       └── llm.py            # Streaming Gemini chats & memory updates
+│   ├── evaluation/               # AI Evaluation Framework & Dashboard
+│   │   ├── dashboard/            # Streamlit dashboard files
+│   │   │   └── dashboard.py      # Streamlit app code
+│   │   ├── datasets/             # Test evaluation JSON files
+│   │   ├── evaluators/           # Category-specific evaluator classes
+│   │   ├── judges/               # LLM-as-a-Judge (Gemini/Groq)
+│   │   ├── metrics/              # Programmatic metrics calculators
+│   │   ├── reports/              # Local generated JSON reports (gitignored)
+│   │   ├── models.py             # Historical runs PostgreSQL models
+│   │   └── runner.py             # CLI pipeline orchestrator
 │   ├── scripts/                  # Utilities & validations
 │   │   ├── seed_movies.py        # Relational and vector seeding script
 │   │   └── test_backend.py       # Diagnostic validation script
@@ -163,3 +173,45 @@ Open your browser and navigate to:
 👉 **[http://localhost:8000](http://localhost:8000)**
 
 Register a username, sign in, and enjoy your movie discussions!
+
+---
+
+## 📊 AI Evaluation Framework & Dashboard
+
+CinephileGPT includes a production-grade AI Evaluation pipeline and an LLMOps-style dashboard to measure, analyze, and track performance changes across multiple categories.
+
+### 1. Key Evaluation Categories & Metrics
+*   **Recommendation Evaluation**: Evaluates movie suggestions using LLM-as-a-Judge (Gemini with Groq fallback) scoring *Relevance*, *Personalization*, *Explanation Quality*, *Diversity*, and *Overall Score* (1-10).
+*   **Personality Evaluation**: Assesses tone, style, and movie obsession consistency scoring *Personality Consistency*, *Movie Enthusiasm*, *Humor*, *Character Preservation*, and *Overall Score* (1-10).
+*   **Memory Evaluation**: Judges multi-turn preference recall and continuity across turns scoring *Memory Recall*, *Preference Usage*, *Continuity*, and *Overall Score* (1-10).
+*   **Refusal Evaluation**: Evaluates safety limits and movie redirection for out-of-domain prompts scoring *Refusal Compliance*, *Character Preservation*, *Redirect Quality*, and *Overall Score* (1-10).
+*   **Retrieval Evaluation**: Calculates deterministic query retrieval performance programmatically from Qdrant vector hits using *Recall@5*, *Recall@10*, *Hit Rate*, *Mean Reciprocal Rank (MRR)*, and *Retrieval Accuracy*.
+
+### 2. Command Line Evaluation Runner
+Run test cases programmatically directly against the database and index. Executed from the `backend/` directory:
+
+*   **Evaluate all test cases** (300 cases):
+    ```bash
+    python evaluation/runner.py
+    ```
+*   **Evaluate a small subset** (e.g. 2 cases per category for fast verification):
+    ```bash
+    python evaluation/runner.py --limit 2
+    ```
+*   **Evaluate a single category**:
+    ```bash
+    python evaluation/runner.py --category memory
+    ```
+*   **Evaluate a single case by ID**:
+    ```bash
+    python evaluation/runner.py --case-id rec_001
+    ```
+
+### 3. Streamlit Analytics Dashboard
+Visualize run history summaries, category drilldowns, trend lines over time, failed case diagnostics, and download CSV/JSON result exports.
+
+To launch the dashboard locally:
+```bash
+streamlit run evaluation/dashboard/dashboard.py
+```
+👉 Open your browser at **[http://localhost:8501](http://localhost:8501)** to investigate decisions.
