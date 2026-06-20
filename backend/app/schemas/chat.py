@@ -23,3 +23,9 @@ class ChatSessionResponse(BaseModel):
 class ChatStreamRequest(BaseModel):
     session_id: Optional[UUID] = None
     message: str
+
+class FeedbackRequest(BaseModel):
+    recommendation_log_id: UUID
+    rating: int  # 1 for upvote, -1 for downvote
+    feedback_text: Optional[str] = None
+
