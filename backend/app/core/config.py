@@ -64,5 +64,54 @@ class Settings(BaseSettings):
         default="llama-3.3-70b-versatile",
         validation_alias="GROQ_MODEL_NAME"
     )
+    
+    HF_TOKEN: str = Field(
+        default="",
+        validation_alias="HF_TOKEN"
+    )
+
+    REDIS_HOST: str = Field(
+        default="localhost",
+        validation_alias="REDIS_HOST"
+    )
+
+    REDIS_PORT: int = Field(
+        default=6379,
+        validation_alias="REDIS_PORT"
+    )
+
+    REDIS_DB: int = Field(
+        default=0,
+        validation_alias="REDIS_DB"
+    )
+
+    REDIS_PASSWORD: str = Field(
+        default="",
+        validation_alias="REDIS_PASSWORD"
+    )
+
+    REDIS_TTL_RECOMMENDATIONS: int = Field(
+        default=3600,
+        validation_alias="REDIS_TTL_RECOMMENDATIONS"
+    )
+
+    REDIS_TTL_SESSIONS: int = Field(
+        default=1800,
+        validation_alias="REDIS_TTL_SESSIONS"
+    )
+
+    ENABLE_REDIS_CACHE: bool = Field(
+        default=True,
+        validation_alias="ENABLE_REDIS_CACHE"
+    )
+
+    API_COST_SAVINGS_PER_HIT: float = Field(
+        default=0.005,
+        validation_alias="API_COST_SAVINGS_PER_HIT"
+    )
 
 settings = Settings()
+
+# Export HF_TOKEN to environment variables so Hugging Face client libraries automatically use it
+if settings.HF_TOKEN:
+    os.environ["HF_TOKEN"] = settings.HF_TOKEN

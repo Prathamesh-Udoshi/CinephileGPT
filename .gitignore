@@ -24,6 +24,8 @@ backend/.env.*
 !backend/.env.example
 
 # Local Databases & Vector Stores
+qdrant_db/
+test_qdrant_db/
 backend/qdrant_db/
 backend/test_qdrant_db/
 backend/test_db/
