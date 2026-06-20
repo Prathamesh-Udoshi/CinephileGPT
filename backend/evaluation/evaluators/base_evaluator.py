@@ -2,10 +2,11 @@ import abc
 from sqlalchemy.orm import Session
 from qdrant_client import QdrantClient
 from app.models.user import User
-from app.models.memory import UserProfile, ChatSession, ChatMessage
+from app.models.memory import UserProfile, ChatSession, ChatMessage, RecommendationLog
 from app.services.intent import IntentClassifierService
 from app.services.retrieval import hybrid_retrieval
 from app.services.llm import get_refusal_stream, get_chat_stream
+from app.services.recommendation import RecommendationPipeline
 from evaluation.judges.llm_judge import LLMJudge
 
 class BaseEvaluator(abc.ABC):
@@ -86,6 +87,7 @@ class BaseEvaluator(abc.ABC):
         # 2. Reset Chat History
         # Delete old sessions
         self.db.query(ChatSession).filter(ChatSession.user_id == self.eval_user.id).delete()
+        self.db.query(RecommendationLog).filter(RecommendationLog.user_id == self.eval_user.id).delete()
         self.db.commit()
 
         # Create new session
@@ -126,32 +128,65 @@ class BaseEvaluator(abc.ABC):
 
         intent = IntentClassifierService.classify_intent(query)
         
-        # Load retrieval context if asking for recommendations
-        if intent == "MOVIE_RECOMMENDATION":
-            retrieved_movies = hybrid_retrieval(
-                db=self.db,
-                client=self.qdrant,
-                query=query,
-                limit=5,
-                user_profile={
-                    "favorite_genres": profile.favorite_genres if profile else [],
-                    "disliked_genres": profile.disliked_genres if profile else []
-                } if profile else None
-            )
-        else:
-            retrieved_movies = []
-
-        # Stream and accumulate response text
         response_text = ""
         if intent == "NON_MOVIE":
             for chunk in get_refusal_stream(query):
                 response_text += chunk
-        else:
+        elif intent == "MOVIE_RECOMMENDATION":
+            # Set is_evaluation=True to bypass clarification questions during evaluation runs
+            is_complete, extracted_profile, follow_up = RecommendationPipeline.assess_completeness(
+                user_id=str(self.eval_user.id),
+                message=query,
+                history=history,
+                db=self.db,
+                is_evaluation=True
+            )
+            
+            if not is_complete:
+                for chunk in RecommendationPipeline.stream_follow_up_question(follow_up):
+                    response_text += chunk
+            else:
+                pref_profile = RecommendationPipeline.build_preference_profile(
+                    user_id=str(self.eval_user.id),
+                    extracted_profile=extracted_profile,
+                    db=self.db
+                )
+                
+                retrieval_query = RecommendationPipeline.generate_retrieval_query(pref_profile)
+                
+                retrieved_movies = RecommendationPipeline.hybrid_retrieve(
+                    query=retrieval_query,
+                    profile=pref_profile,
+                    db=self.db,
+                    client=self.qdrant,
+                    extracted_profile=extracted_profile,
+                    original_query=query
+                )
+                
+                for chunk in RecommendationPipeline.stream_recommendations(
+                    movies=retrieved_movies,
+                    profile=pref_profile,
+                    history=history,
+                    current_message=query
+                ):
+                    response_text += chunk
+                    
+                RecommendationPipeline.log_recommendation(
+                    user_id=str(self.eval_user.id),
+                    session_id=session.id,
+                    profile=pref_profile,
+                    query=retrieval_query,
+                    retrieved_movies=retrieved_movies,
+                    recommended_movies=retrieved_movies,
+                    response=response_text,
+                    db=self.db
+                )
+        else: # MOVIE_DISCUSSION
             for chunk in get_chat_stream(
                 message=query,
                 history=history,
                 user_profile=profile,
-                retrieved_movies=retrieved_movies,
+                retrieved_movies=[],
                 intent=intent
             ):
                 response_text += chunk

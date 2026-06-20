@@ -1,8 +1,9 @@
 import logging
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
-from app.api import auth, chat, memory, movies
-from app.core.database import Base, engine
+from app.api import auth, chat, memory, movies, analytics
+from app.core.database import init_db_schema, engine
+from app.services.cache import cache_service
 
 # Setup logging
 logging.basicConfig(level=logging.INFO)
@@ -24,20 +25,29 @@ app.add_middleware(
 )
 
 @app.on_event("startup")
-def on_startup():
+async def on_startup():
     try:
-        logger.info("Attempting to connect and create PostgreSQL tables...")
-        Base.metadata.create_all(bind=engine)
-        logger.info("Relational database tables checked/created successfully.")
+        logger.info("Attempting to connect and initialize/migrate PostgreSQL tables...")
+        init_db_schema()
+        logger.info("Relational database tables checked/created/migrated successfully.")
     except Exception as e:
-        logger.error(f"Error during PostgreSQL table creation: {e}")
+        logger.error(f"Error during PostgreSQL schema initialization: {e}")
         logger.warning("FastAPI started successfully, but SQL operations will fail until PostgreSQL is running and correct connection details are provided in .env.")
+
+    # Initialize Redis caching connection pool
+    await cache_service.connect()
+
+@app.on_event("shutdown")
+async def on_shutdown():
+    # Disconnect from Redis pool gracefully
+    await cache_service.disconnect()
 
 # Register routers
 app.include_router(auth.router)
 app.include_router(chat.router)
 app.include_router(memory.router)
 app.include_router(movies.router)
+app.include_router(analytics.router)
 
 import os
 from fastapi.responses import HTMLResponse
