@@ -43,6 +43,12 @@ graph TD
 *   **Multi-Tiered Memory & Profiling**:
     *   *Short-term Memory*: Preserves the last 10 messages (5 full turns of alternating user/assistant dialogs) to maintain perfect conversational continuity.
     *   *Long-term Memory*: A real-time preference extraction mechanism that runs inline at the end of the streaming turn, utilizing Gemini API to extract newly mentioned preferences and update the PostgreSQL user profiles, immediately pushing a synchronization event (`memory_update`) to the frontend.
+*   **Production-Grade Redis Caching**:
+    *   *Recommendation Cache*: Caches movie recommendations and response texts using deterministic SHA-256 hashed taste profiles as keys (stable across list/field reorderings), bypassing vector db searches and LLM generation on repeat queries.
+    *   *Session Cache*: Speeds up history retrieval by caching the last 10 chat messages in Redis.
+    *   *Graceful Fallback*: Automatically detects Redis connection states with a 2-second timeout and falls back to a transparent cache-disabled mode if Redis is down.
+*   **Structured Logging & Cost Tracking**: Records request metadata, cache hit/miss status, retrieval/LLM/total latencies, and LLM provider details to PostgreSQL, automatically calculating API cost savings.
+*   **Real-time System-wide Analytics**: Exposes detailed metrics on cache hit rates, average execution latencies, top movie recommendations, most active genres/themes/moods, and cost savings.
 *   **Interactive Cinema Dashboard**:
     *   Streamed responses (SSE tokens) rendered inside clean dialogue blocks.
     *   Interactive movie cards rendered dynamically on search hits (with poster previews and direct "Add to Watchlist" quick-actions).
@@ -57,8 +63,9 @@ CinephileGPT/
 ├── backend/                      # FastAPI Backend
 │   ├── app/
 │   │   ├── api/                  # API routers (endpoints)
+│   │   │   ├── analytics.py      # Real-time metrics calculations API
 │   │   │   ├── auth.py           # JWT logins, signups, bcrypt hashes
-│   │   │   ├── chat.py           # Chat session listings & SSE streaming
+│   │   │   ├── chat.py           # Chat session listings, SSE streaming, feedback
 │   │   │   ├── memory.py         # Read/Write personalization profiles
 │   │   │   └── movies.py         # Catalog lookup and watchlist edits
 │   │   ├── core/                 # Configurations & DB bindings
@@ -68,14 +75,17 @@ CinephileGPT/
 │   │   ├── models/               # SQLAlchemy SQL schemas
 │   │   │   ├── user.py           # Users table
 │   │   │   ├── movie.py          # Movies & Watchlist tables
-│   │   │   └── memory.py         # UserProfiles & Chat histories
+│   │   │   └── memory.py         # UserProfiles, Chat histories, logs, feedback
 │   │   ├── schemas/              # Pydantic validation schemas
 │   │   │   ├── chat.py
 │   │   │   ├── memory.py
 │   │   │   └── movie.py
 │   │   └── services/             # Core RAG, ML, & LLM orchestrations
+│   │       ├── analytics.py      # Analytics metrics accumulator service
+│   │       ├── cache.py          # Redis caching service (with NoOp fallback)
 │   │       ├── embeddings.py     # Local sentence-transformers encoder
 │   │       ├── intent.py         # Zero-shot intent classification
+│   │       ├── recommendation.py # Main recommendation & boosting pipeline
 │   │       ├── retrieval.py      # Hybrid RAG & Qdrant query filters
 │   │       └── llm.py            # Streaming Gemini chats & memory updates
 │   ├── evaluation/               # AI Evaluation Framework & Dashboard
@@ -90,7 +100,8 @@ CinephileGPT/
 │   │   └── runner.py             # CLI pipeline orchestrator
 │   ├── scripts/                  # Utilities & validations
 │   │   ├── seed_movies.py        # Relational and vector seeding script
-│   │   └── test_backend.py       # Diagnostic validation script
+│   │   ├── test_backend.py       # Diagnostic validation script
+│   │   └── test_cache.py         # Redis and serialization validation script
 │   ├── static/                   # Frontend SPA Dashboard
 │   │   └── index.html            # Main single-file layout (HTML/CSS/JS)
 │   ├── requirements.txt          # Backend dependencies list
