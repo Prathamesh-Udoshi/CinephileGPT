@@ -39,12 +39,12 @@ graph TD
 
 *   **Witty Cinephile Persona**: Converses like a dedicated film buff, referencing cinematography styles, director cuts, and actors, while humorously rejecting non-movie queries.
 *   **Zero-Dependency Local Vector Search**: Uses local `sentence-transformers/all-MiniLM-L6-v2` embeddings combined with a file-based Qdrant client (`qdrant-client` path storage), removing any Docker container requirements.
-*   **Hybrid RAG Pipeline**: Blends dense vector search matching with PostgreSQL relational table queries (strictly filtering out disliked genres dynamically, while keeping favorite genres as soft personalization parameters at the LLM level to allow unrestricted searching).
+*   **Hybrid RAG Pipeline**: Blends dense vector search matching with PostgreSQL relational table queries (strictly filtering out disliked genres dynamically, while keeping favorite genres as soft personalization parameters at the LLM level). Now supports dynamic movie metadata extraction and UI card rendering during general movie discussions (resolving pronouns and references to pull synopses and details directly from the relational database).
 *   **Multi-Tiered Memory & Profiling**:
     *   *Short-term Memory*: Preserves the last 10 messages (5 full turns of alternating user/assistant dialogs) to maintain perfect conversational continuity.
     *   *Long-term Memory*: A real-time preference extraction mechanism that runs inline at the end of the streaming turn, utilizing Gemini API to extract newly mentioned preferences and update the PostgreSQL user profiles, immediately pushing a synchronization event (`memory_update`) to the frontend.
 *   **Production-Grade Redis Caching**:
-    *   *Recommendation Cache*: Caches movie recommendations and response texts using deterministic SHA-256 hashed taste profiles as keys (stable across list/field reorderings), bypassing vector db searches and LLM generation on repeat queries.
+    *   *Recommendation Cache*: Caches movie recommendations and response texts using deterministic SHA-256 hashed taste profiles as keys (stable across list/field reorderings, excluding highly dynamic lists like `exclude_movie_ids` to guarantee stable cache hits for identical queries across different conversations).
     *   *Session Cache*: Speeds up history retrieval by caching the last 10 chat messages in Redis.
     *   *Graceful Fallback*: Automatically detects Redis connection states with a 2-second timeout and falls back to a transparent cache-disabled mode if Redis is down.
 *   **Structured Logging & Cost Tracking**: Records request metadata, cache hit/miss status, retrieval/LLM/total latencies, and LLM provider details to PostgreSQL, automatically calculating API cost savings.

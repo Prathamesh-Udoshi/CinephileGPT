@@ -109,6 +109,8 @@ class RedisCacheService(BaseCacheService):
         """
         normalized = {}
         for key, value in profile.items():
+            if key == "exclude_movie_ids":
+                continue
             if value is None:
                 continue
             
