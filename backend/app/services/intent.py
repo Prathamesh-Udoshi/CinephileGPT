@@ -92,3 +92,95 @@ JSON Response:"""
 
         # Default fallback
         return "MOVIE_DISCUSSION"
+
+    @classmethod
+    def extract_discussed_movie(cls, message: str, history: list = None) -> str | None:
+        """
+        Extracts the movie title being referred to in the user's message, 
+        using history context to resolve references like "that movie".
+        Returns the movie title if found, otherwise None.
+        """
+        history_context = ""
+        if history:
+            history_list = []
+            # Utilize the last 3 turns for intent/entity context
+            for msg in history[-3:]:
+                role = "User" if msg.role == "user" else "CinephileGPT"
+                history_list.append(f"{role}: {msg.content}")
+            if history_list:
+                history_context = "Recent Conversation History:\n" + "\n".join(history_list) + "\n\n"
+
+        prompt = f"""You are an entity extraction module for CinephileGPT, an AI system that answers movie-related questions.
+Your job is to identify if the current user message is discussing, asking about, or referencing a specific movie.
+If a specific movie is referenced, return its title.
+If the message uses a reference like "that movie", "this film", "it", etc., use the recent conversation history to identify which movie is being referred to.
+If no specific movie is being discussed, or if the user is asking for general recommendations rather than discussing a specific movie, return null.
+
+Recent Conversation History:
+{history_context}Current User Message to analyze: "{message}"
+
+Return ONLY a JSON block with the field "movie_title" (string or null).
+
+JSON Response:"""
+
+        # 1. Try Gemini first (if key configured)
+        if settings.GEMINI_API_KEY:
+            try:
+                genai.configure(api_key=settings.GEMINI_API_KEY)
+                model = genai.GenerativeModel(
+                    settings.GEMINI_MODEL_NAME,
+                    safety_settings={
+                        "HARM_CATEGORY_HARASSMENT": "BLOCK_NONE",
+                        "HARM_CATEGORY_HATE_SPEECH": "BLOCK_NONE",
+                        "HARM_CATEGORY_SEXUALLY_EXPLICIT": "BLOCK_NONE",
+                        "HARM_CATEGORY_DANGEROUS_CONTENT": "BLOCK_NONE",
+                    }
+                )
+                response = model.generate_content(
+                    prompt,
+                    generation_config={"response_mime_type": "application/json"}
+                )
+                try:
+                    text = response.text
+                except (ValueError, IndexError) as error:
+                    raise ValueError(f"Empty or blocked response ({error})")
+                data = json.loads(text.strip())
+                title = data.get("movie_title")
+                if title:
+                    return str(title).strip()
+                return None
+            except Exception as e:
+                print(f"[Warning] Gemini movie extraction failed: {e}. Attempting Groq fallback...")
+
+        # 2. Try Groq as fallback
+        if settings.GROQ_API_KEY:
+            try:
+                url = "https://api.groq.com/openai/v1/chat/completions"
+                headers = {
+                    "Authorization": f"Bearer {settings.GROQ_API_KEY}",
+                    "Content-Type": "application/json"
+                }
+                payload = {
+                    "model": settings.GROQ_MODEL_NAME,
+                    "messages": [
+                        {"role": "user", "content": prompt}
+                    ],
+                    "response_format": {"type": "json_object"},
+                    "temperature": 0.2
+                }
+                r = httpx.post(url, headers=headers, json=payload, timeout=10.0)
+                if r.status_code == 200:
+                    data = r.json()
+                    content = data["choices"][0]["message"]["content"]
+                    resp_json = json.loads(content.strip())
+                    title = resp_json.get("movie_title")
+                    if title:
+                        return str(title).strip()
+                    return None
+                else:
+                    print(f"[Warning] Groq movie extraction API returned {r.status_code}: {r.text}")
+            except Exception as e:
+                print(f"[Error] Groq movie extraction failed: {e}")
+
+        # Default fallback
+        return None

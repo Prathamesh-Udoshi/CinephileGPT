@@ -362,6 +362,33 @@ async def stream_chat(
             else:
                 # Normal movie discussion flow
                 movies_payload = []
+                retrieved_movies = []
+                
+                try:
+                    discussed_title = IntentClassifierService.extract_discussed_movie(payload.message, history)
+                    if discussed_title:
+                        from app.models.movie import Movie
+                        # Find exact case-insensitive match first
+                        movie = db.query(Movie).filter(Movie.title.ilike(discussed_title)).first()
+                        if not movie:
+                            # Fuzzy matching inside title
+                            movie = db.query(Movie).filter(Movie.title.ilike(f"%{discussed_title}%")).order_by(Movie.popularity.desc()).first()
+                        
+                        if movie:
+                            retrieved_movies = [movie]
+                            movies_payload = [
+                                {
+                                    "id": movie.id,
+                                    "title": movie.title,
+                                    "release_year": movie.release_date.year if movie.release_date else None,
+                                    "director": movie.director,
+                                    "genres": movie.genres,
+                                    "vote_average": float(movie.vote_average) if movie.vote_average else None
+                                }
+                            ]
+                except Exception as ex:
+                    print(f"[Warning] Failed to extract/query discussed movie: {ex}")
+
                 yield {
                     "event": "movies",
                     "data": json.dumps(movies_payload)
@@ -371,7 +398,7 @@ async def stream_chat(
                     message=payload.message,
                     history=history,
                     user_profile=profile,
-                    retrieved_movies=[],
+                    retrieved_movies=retrieved_movies,
                     intent=intent
                 ):
                     full_response_content += chunk
