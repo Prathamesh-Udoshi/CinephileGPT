@@ -77,7 +77,72 @@ def get_groq_completions_stream(prompt: str, system_instruction: str) -> Generat
     except Exception as e:
         yield f"\n[Warning: Groq Connection error: {str(e)}]"
 
-def get_refusal_stream(message: str) -> Generator[str, None, None]:
+def clean_stream_prefixes(stream: Generator[str, None, None]) -> Generator[str, None, None]:
+    """
+    Buffer the start of a stream and clean up common model-generated prefixes 
+    like 'assistant:', 'assistant\n', 'CinephileGPT:', or 'CinephileGPT response:'.
+    """
+    buffer = ""
+    prefix_checked = False
+    
+    for chunk in stream:
+        if not prefix_checked:
+            buffer += chunk
+            # Wait until we have enough characters or a newline/colon to check for prefixes
+            if len(buffer) >= 40 or "\n" in chunk or ":" in chunk:
+                cleaned_buffer = buffer
+                lower_buf = cleaned_buffer.lower().strip()
+                
+                prefixes_to_strip = [
+                    "assistant:",
+                    "assistant\n",
+                    "assistant",
+                    "cinephilegpt:",
+                    "cinephilegpt response:",
+                    "cinephilegpt\n"
+                ]
+                
+                stripped = True
+                while stripped:
+                    stripped = False
+                    for prefix in prefixes_to_strip:
+                        val = cleaned_buffer.lstrip()
+                        if val.lower().startswith(prefix):
+                            cleaned_buffer = val[len(prefix):].lstrip()
+                            stripped = True
+                            break
+                            
+                if cleaned_buffer:
+                    yield cleaned_buffer
+                buffer = ""
+                prefix_checked = True
+        else:
+            yield chunk
+            
+    if not prefix_checked and buffer:
+        cleaned_buffer = buffer
+        prefixes_to_strip = [
+            "assistant:",
+            "assistant\n",
+            "assistant",
+            "cinephilegpt:",
+            "cinephilegpt response:",
+            "cinephilegpt\n"
+        ]
+        
+        stripped = True
+        while stripped:
+            stripped = False
+            for prefix in prefixes_to_strip:
+                val = cleaned_buffer.lstrip()
+                if val.lower().startswith(prefix):
+                    cleaned_buffer = val[len(prefix):].lstrip()
+                    stripped = True
+                    break
+        if cleaned_buffer:
+            yield cleaned_buffer
+
+def _get_refusal_stream_raw(message: str) -> Generator[str, None, None]:
     """
     Stream a humorous cinephile refusal response.
     Tries Gemini API first, falling back to Groq API on failure.
@@ -116,6 +181,9 @@ def get_refusal_stream(message: str) -> Generator[str, None, None]:
 
     yield "I only talk about movies! (Both Gemini and Groq API backends encountered rate limits or connection errors.)"
 
+def get_refusal_stream(message: str) -> Generator[str, None, None]:
+    return clean_stream_prefixes(_get_refusal_stream_raw(message))
+
 def format_context_movies(movies: List[Movie]) -> str:
     """
     Format the retrieved RAG movie metadata into a clean XML context string.
@@ -141,7 +209,7 @@ def format_context_movies(movies: List[Movie]) -> str:
         context_blocks.append(block)
     return "\n".join(context_blocks)
 
-def get_chat_stream(
+def _get_chat_stream_raw(
     message: str,
     history: List[ChatMessage],
     user_profile: UserProfile,
@@ -195,8 +263,10 @@ The user is NOT asking for movie recommendations. Respond meaningfully to their 
 
 CRITICAL PERSONALIZATION & CONTEXT RULES:
 1. Conversation Continuity: Always prioritize the actual topic of discussion. If the user is responding to your question or discussing a specific movie/director (e.g., you asked about Pulp Fiction, and they said "I haven't watched it yet"), focus your reply directly on that topic, director (Quentin Tarantino), or genre.
-2. No Shoehorning: Do NOT force the user's profile favorites (like David Fincher, Morgan Freeman, psychological thrillers) into the conversation unless they are directly relevant to the current topic. The profile memory is a subtle guide, not a mandate to repeat their favorites in every message.
-3. Natural Flow: Address the user's current sentence/message directly and keep the conversation natural, engaging, and in character as CinephileGPT, without sounding robotic or stalker-like.
+2. No Profile Referencing: Do NOT mention or refer to the user's stored profile favorites directly in the conversation. For example, do NOT say "I know you like Brad Pitt", "Since you are a fan of Christopher Nolan", or "It's no surprise you love psychological thrillers." Use these preferences subtly behind the scenes to guide your recommendations and style, behaving as if you simply happen to share similar tastes, without revealing that you are tracking their profile database metadata.
+3. No Shoehorning: Do NOT force the user's profile favorites (like David Fincher, Morgan Freeman, psychological thrillers) into the conversation unless they are directly relevant to the current topic. The profile memory is a subtle guide, not a mandate to repeat their favorites in every message.
+4. Independent Cinephile Identity: When the user asks about YOUR (the assistant's) personal favorites, preferences, or opinions (e.g. "who is your favorite actor?", "what is your favorite movie?", "which director do you like?"), express your own independent, opinionated cinephile views from general cinema history. Do NOT copy, parrot, or feed back the user's own profile favorites (from the USER PROFILE MEMORY) as if they are your own. Be a distinct entity with your own unique cinematic taste.
+5. Natural Flow: Address the user's current sentence/message directly and keep the conversation natural, engaging, and in character as CinephileGPT, without sounding robotic or stalker-like.
 
 {recommendation_constraint}
 For movie recommendations, prioritize movies from the "RETRIEVED MOVIE DATABASE CONTEXT" below. If they ask for something outside the context, draw from your own general knowledge, but reference the context whenever possible. You must never mention database limits, database search contexts, or user profile detours to the user.
@@ -246,6 +316,15 @@ CinephileGPT response:"""
             print(f"[Error] Groq chat stream fallback failed: {e}")
 
     yield "Look, kid, we had a production error (both Gemini and Groq APIs are currently offline or overloaded). Let's retake from the top."
+
+def get_chat_stream(
+    message: str,
+    history: List[ChatMessage],
+    user_profile: UserProfile,
+    retrieved_movies: List[Movie],
+    intent: str = "MOVIE_DISCUSSION"
+) -> Generator[str, None, None]:
+    return clean_stream_prefixes(_get_chat_stream_raw(message, history, user_profile, retrieved_movies, intent))
 
 def extract_and_consolidate_memory(
     db: Session,

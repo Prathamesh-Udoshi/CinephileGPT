@@ -11,7 +11,7 @@ from app.core.config import settings
 from app.models.memory import UserProfile, ChatMessage, RecommendationLog
 from app.models.movie import Movie, UserWatchlist
 from app.services.retrieval import search_movies_vector
-from app.services.llm import CINEPHILE_SYSTEM_INSTRUCTIONS, GEMINI_SAFETY_SETTINGS, get_groq_completions_stream
+from app.services.llm import CINEPHILE_SYSTEM_INSTRUCTIONS, GEMINI_SAFETY_SETTINGS, get_groq_completions_stream, clean_stream_prefixes
 
 class RecommendationPipeline:
     logger = logging.getLogger("recommendation_pipeline")
@@ -206,11 +206,16 @@ Historical preferences:
 Check if the current message, the conversation history, or historical preferences provide specific search parameters.
 Relevant attributes: genre, mood, themes, pacing (slow burn vs fast paced), language, country, release period, runtime, favorite actors/directors/movies, mainstream vs hidden gem, emotional impact.
 
+CONVERSATIONAL REFERENCE RESOLUTION:
+Users often answer follow-up questions using shortcuts, abbreviations, spelling mistakes, or relative references (e.g., 'the later one', 'latter', 'first option', 'modern one', 'yes', 'that one'). You MUST resolve these references by reading the assistant's preceding follow-up question in the history to extract the correct preferences into the `extracted_profile` (e.g. if the assistant asked 'classic horror or modern psychologically unsettling?' and the user said 'the later one', resolve this to a release_period of 'modern' and themes/genres of 'horror', 'psychological thriller').
+
 CRITICAL RULES:
-1. Information is COMPLETE if the user specifies at least one constraint (genre, mood, theme, director, actor, similar movie, pacing, etc.) in the query or history.
-2. Information is INCOMPLETE if the query is very generic (e.g. "Recommend a movie", "Suggest something to watch", "What should I watch tonight?") and no other details/history are present.
-3. If historical preferences exist but the query is generic, acknowledge that memory and ask a follow-up question (e.g. 'I know you consistently enjoy science fiction. Do you want to stick with that tonight or try something different?') and set is_complete to false.
-4. If is_evaluation is true, ALWAYS set is_complete to true if there is any historical preference or query constraint, so that we can immediately recommend a movie.
+1. For regular conversation (when is_evaluation is false): The assistant should make recommendations once it has a basic understanding of the user's target taste. Specifically, if the user has provided at least one clear constraint, such as specifying a genre (e.g., horror, sci-fi, comedy, thriller, action, drama), a theme/mood, a director, an actor, or a similar movie, information is COMPLETE and recommendations should be made immediately. Do NOT ask follow-up questions if they specify a genre or other preference.
+2. Information is INCOMPLETE only when the user's request is completely generic (e.g. "Recommend a movie", "Suggest something to watch", "What should I watch tonight?") and no prior history/preferences are detailed. In this case, ask a witty, brief follow-up question.
+3. Information is always COMPLETE if the user specifies "anything", "anything is fine", "surprise me", "whatever", "any genre", or expresses indifference/lack of specific preference.
+4. Information is COMPLETE if the user has answered the preceding clarifying/follow-up question. If they answered the previous question (even if they only answered it briefly or with one option like 'the latter one' or 'first option'), mark is_complete as true. Do NOT repeat the same follow-up question or keep the user in an interrogation loop.
+5. If is_evaluation is true, ALWAYS set is_complete to true if there is any historical preference or query constraint (at least one constraint), so that we can immediately recommend a movie.
+6. When is_complete is false, the follow_up_question MUST be written in the character of CinephileGPT: enthusiastic, witty, slightly opinionated, movie-obsessed, and using cinematic flair or references where appropriate. Keep the question brief (maximum 1 sentence).
 
 Is Evaluation Run: {is_evaluation}
 
@@ -241,6 +246,25 @@ Return ONLY a valid JSON object:
         extracted = result.get("extracted_profile", {})
         follow_up = result.get("follow_up_question")
         
+        # Check if the user message indicates indifference ("anything", "whatever", "surprise me", etc.)
+        msg_lower = message.lower().strip(",.!?\"' ")
+        indifferent_phrases = ["anything", "anything is fine", "whatever", "any", "surprise me", "you choose", "don't care", "anything's fine", "any is fine", "anything works", "all good", "any works"]
+        if any(phrase in msg_lower for phrase in indifferent_phrases):
+            is_complete = True
+            follow_up = None
+
+        # Check if the user message specifies common genres or themes to prevent loops/follow-ups
+        common_genres_themes = [
+            "horror", "sci-fi", "scifi", "thriller", "comedy", "action", "romance", "drama", 
+            "documentary", "fantasy", "mystery", "adventure", "crime", "western", "musical", 
+            "animation", "psychological", "slow-burn", "slow burn", "fast-paced", "fast paced",
+            "slasher", "gore", "jump scare", "jumpscare", "spooky", "scary", "funny", "dark",
+            "blockbuster", "indie", "classic", "modern"
+        ]
+        if any(term in msg_lower for term in common_genres_themes):
+            is_complete = True
+            follow_up = None
+
         # Double safety check: if we are in evaluation and have any memory/extraction, force complete
         if is_evaluation:
             # If user has some history preference, or we parsed genres/directors/actors/themes, set is_complete to True
@@ -579,7 +603,7 @@ CRITICAL INSTRUCTIONS:
 5. Tone: Be enthusiastic, opinionated, witty, and cinephile-obsessed. Keep introduction and outro very brief.
 6. Do NOT mention database limits, database searches, or user profile detours.
 """
-        for chunk in cls._get_stream_completion(prompt, llm_info):
+        for chunk in clean_stream_prefixes(cls._get_stream_completion(prompt, llm_info)):
             yield chunk
 
     @classmethod
